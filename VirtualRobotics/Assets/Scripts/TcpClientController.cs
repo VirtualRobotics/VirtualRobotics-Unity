@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -12,11 +13,11 @@ public class TcpClientController : MonoBehaviour
     public int port = 5000;
     
     public AgentController agent;
+    public static readonly ConcurrentQueue<byte[]> FrameQueue = new ConcurrentQueue<byte[]>();
     
     private TcpClient _client;
     private NetworkStream _stream;
     private StreamReader _reader;
-    private StreamWriter _writer;
 
     private Thread _thread;
     private bool _running;
@@ -38,14 +39,26 @@ public class TcpClientController : MonoBehaviour
             _client.Connect(host, port);
             _stream = _client.GetStream();
             _reader = new StreamReader(_stream, Encoding.UTF8);
-            _writer = new StreamWriter(_stream, Encoding.UTF8) { AutoFlush = true };
 
             DebugLog("[UNITY] Połączono z serwerem");
 
             while (_running)
             {
-                _writer.WriteLine("HELLO_FROM_UNITY");
-
+                if (!FrameQueue.TryDequeue(out var frameBytes))
+                {
+                    Thread.Sleep(5);
+                    continue;
+                }
+                
+                int length = frameBytes.Length;
+                byte[] lengthBytes = BitConverter.GetBytes(length);
+                
+                if (BitConverter.IsLittleEndian) Array.Reverse(lengthBytes);
+                
+                _stream.Write(lengthBytes, 0, 4);
+                _stream.Write(frameBytes, 0, frameBytes.Length);
+                _stream.Flush();
+                
                 string line = _reader.ReadLine();
                 if (line == null)
                 {
@@ -54,10 +67,7 @@ public class TcpClientController : MonoBehaviour
                 }
 
                 DebugLog("[UNITY] Odebrano z Pythona: " + line);
-                
                 HandleCommand(line);
-                
-                Thread.Sleep(1000);
             }
         }
         catch (Exception e)
@@ -67,7 +77,6 @@ public class TcpClientController : MonoBehaviour
         finally
         {
             _reader?.Dispose();
-            _writer?.Dispose();
             _stream?.Dispose();
             _client?.Close();
         }
