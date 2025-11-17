@@ -1,12 +1,12 @@
-using System.IO;
+using System.Collections.Concurrent;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
-public class CameraCapture : MonoBehaviour
+public class CameraStreamer : MonoBehaviour
 {
     public Camera cam;
-    public float captureRate = 0.5f;
-    public string fileName = "agent_frame.png";
+    public float captureRate = 0.1f;
+    public int jpegQuality = 60;
 
     private float _timer;
     private Texture2D _texture;
@@ -43,10 +43,8 @@ public class CameraCapture : MonoBehaviour
         
         RenderTexture.active = currentRT;
         
-        byte[] bytes = _texture.EncodeToPNG();
-        string path = Path.Combine(Application.persistentDataPath, fileName);
-        File.WriteAllBytes(path, bytes);
-        
-        Debug.Log("[CameraCapture] Zapisano klatkę do: " + path);
+        byte[] jpgBytes = _texture.EncodeToJPG(jpegQuality);
+
+        TcpClientController.FrameQueue.Enqueue(jpgBytes);
     }
 }
