@@ -44,76 +44,236 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
+    <Analyzer Include="C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ai.inference@4ac711cab9a3\Runtime\Core\SourceGenerator\SourceGenerators.dll" />
+    <Analyzer Include="C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\Runtime\SourceGenerators\netstandard2.0\EnumToLowerCase.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\GameSettings.cs" />
+    <Compile Include="Assets\Scripts\MazeManager.cs" />
+    <Compile Include="Assets\Scripts\GameModeManager.cs" />
+    <Compile Include="Assets\Scripts\ButtonHover.cs" />
+    <Compile Include="Assets\Scripts\RLAgentController.cs" />
+    <Compile Include="Assets\Scripts\TcpClientController.cs" />
     <Compile Include="Assets\Scripts\CameraStreamer.cs" />
     <Compile Include="Assets\Scripts\UnityMainThreadDispatcher.cs" />
-    <Compile Include="Assets\Scripts\AgentController.cs" />
-    <Compile Include="Assets\Scripts\TcpClientController.cs" />
+    <Compile Include="Assets\Scripts\HeuristicMovement.cs" />
+    <Compile Include="Assets\Scripts\MainMenuControler.cs" />
+    <Compile Include="Assets\Scripts\GameUIControler.cs" />
     <None Include="Library\PackageCache\com.unity.settings-manager@41738c275190\package.json" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.subsystems\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Chip.uss" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.jsonserialize\package.json" />
+    <None Include="Library\PackageCache\com.unity.burst@1df634d836b8\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Cursors.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.screencapture\package.json" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.cloth\package.json" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\UITK.uss" />
+    <None Include="Library\PackageCache\com.unity.test-framework.performance@0840f58e4562\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Avatar.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\DayPicker.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequesttexture\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\HelpText.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Drawer.uss" />
     <None Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\package.json" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.ai\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ColorField.uss" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile-2-Pass.shader" />
+    <None Include="Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.LowLevel.ILSupport\README.txt" />
     <None Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\ValidationConfig.json" />
     <None Include="Library\PackageCache\com.unity.ugui@a73b706e285a\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Radio.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\DatePicker.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Menu.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ColorSlider.uss" />
     <None Include="Library\PackageCache\com.unity.ext.nunit@031a54704bff\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ColorPicker.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\GridView.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ActionButton.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Toolbar.uss" />
+    <None Include="Library\PackageCache\com.unity.ml-agents@592fae96fab2\package.json" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.assetbundle\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Icons\Icons.uss" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Large.class.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Row.uss" />
+    <None Include="Assets\ML-Agents\Timers\GameScene_timers.json" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.imgui\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ColorSwatch.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Palette.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.tilemap\package.json" />
+    <None Include="Library\PackageCache\com.unity.test-framework.performance@0840f58e4562\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\StackView.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Spacer.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\SwipeView.uss" />
     <None Include="Library\PackageCache\com.unity.timeline@6b9e48457ddb\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\TextArea.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Breadcrumbs.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\MonthPicker.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Progress.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.accessibility\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Medium.uss" />
     <None Include="Library\PackageCache\com.unity.ide.visualstudio@74aa435fc4bb\ValidationConfig.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\InputLabel.uss" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\PageView.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.terrainphysics\package.json" />
+    <None Include="Library\PackageCache\com.unity.mathematics@8017b507cc74\package.json" />
+    <None Include="Library\PackageCache\com.unity.burst@1df634d836b8\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Preloader.uss" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
     <None Include="Library\PackageCache\com.unity.visualscripting@b4d700247d4b\package.json" />
     <None Include="Library\PackageCache\com.unity.editorcoroutines@7d48783e7b8c\package.json" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\package.json" />
+    <None Include="Assets\ML-Agents\Timers\SampleScene_timers.json" />
     <None Include="Library\PackageCache\com.unity.ugui@a73b706e285a\PackageConversionData.json" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestassetbundle\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Vector2Field.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\DateField.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\FAB.uss" />
     <None Include="Library\PackageCache\com.unity.ide.visualstudio@74aa435fc4bb\package.json" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.imageconversion\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Shaders\ColorWheel.shader" />
     <None Include="Library\PackageCache\com.unity.feature.development@767aadbc6eb7\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Tooltip.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\SplitView.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\TouchSlider.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unityanalytics\package.json" />
     <None Include="Library\PackageCache\com.unity.ide.rider@1f60b3138684\package.json" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.video\package.json" />
+    <None Include="Assets\TextMesh Pro\Shaders\SDFFunctions.hlsl" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Stepper.uss" />
     <None Include="Library\PackageCache\com.unity.ide.rider@1f60b3138684\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\AvatarGroup.uss" />
     <None Include="Library\PackageCache\com.unity.test-framework@d97b7cd61ded\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ListViewItem.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Slider.uss" />
+    <None Include="Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\package.json" />
     <None Include="Library\PackageCache\com.unity.performance.profile-analyzer@a68e7bc84997\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Tray.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Icon.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Shaders\CircularProgress.shader" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.particlesystem\package.json" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.physics2d\package.json" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.vr\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ScrollView.uss" />
     <None Include="Library\PackageCache\com.unity.visualscripting@b4d700247d4b\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Context.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\DrawerHeader.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Dark.uss" />
+    <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Editor Light.class.uss" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF.shader" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Large.uss" />
     <None Include="Library\PackageCache\com.unity.ide.visualstudio@74aa435fc4bb\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Shaders\SVSquare.shader" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.wind\package.json" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Tabs.uss" />
+    <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.umbra\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Small.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Toggle.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ActionGroup.uss" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Editor Light.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Heading.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Shaders\LinearProgress.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\YearPicker.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Alias.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Light.class.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Shaders\AppUI.cginc" />
     <None Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Editor Dark.class.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.audio\package.json" />
+    <None Include="Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\ProtoBuffer\link.xml" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Shaders\CanvasBackground.shader" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.physics\package.json" />
+    <None Include="Library\PackageCache\com.unity.ai.inference@4ac711cab9a3\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Toast.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\DropZone.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Canvas.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.vehicles\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\AppBar.uss" />
     <None Include="Library\PackageCache\com.unity.testtools.codecoverage@205a02cbcb39\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Quote.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Small.class.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestwww\package.json" />
+    <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Dialog.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequestaudio\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Picker.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Divider.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Badge.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.hierarchycore\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Light.uss" />
     <None Include="Library\PackageCache\com.unity.ugui@a73b706e285a\Editor Resources\Shaders\TMP_SDF_SSD.cginc" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\PageIndicator.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Editor Dark.uss" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\ValidationConfig.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Medium.class.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\NumericalField.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\TextField.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.xr\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Vector4Field.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\RectField.uss" />
     <None Include="Library\PackageCache\com.unity.ugui@a73b706e285a\Editor Resources\Shaders\TMP_Properties.cginc" />
     <None Include="Library\PackageCache\com.unity.settings-manager@41738c275190\ValidationExceptions.json" />
     <None Include="Library\PackageCache\com.unity.timeline@6b9e48457ddb\ValidationExceptions.json" />
     <None Include="Library\PackageCache\com.unity.ugui@a73b706e285a\Editor Resources\Shaders\TMP_SDF Internal Editor.shader" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Elevation.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\BottomNavBar.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Popover.uss" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\BoundsField.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.director\package.json" />
+    <None Include="Assets\ML-Agents\Timers\MenuScene_timers.json" />
     <None Include="Library\PackageCache\com.unity.visualscripting@b4d700247d4b\ValidationConfig.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Checkbox.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\FieldLabel.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.terrain\package.json" />
+    <None Include="Library\PackageCache\com.unity.2d.sprite@331abd9a1e2f\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Shaders\ColorSwatch.shader" />
+    <None Include="Library\PackageCache\com.unity.collections@aea9d3bd5e19\package.json" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.androidjni\package.json" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Accordion.uss" />
     <None Include="Library\PackageCache\com.unity.ugui@a73b706e285a\PackageConversionData_Assets.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Dropdown.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Globals.uss" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ActionBar.uss" />
+    <None Include="Library\PackageCache\com.unity.mathematics@8017b507cc74\ValidationExceptions.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Text.uss" />
+    <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Themes\App UI - Dark.class.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.animation\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Button.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Link.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ColorWheel.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\App UI.uss" />
+    <None Include="Library\PackageCache\com.unity.collections@aea9d3bd5e19\pvpExceptions.json" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+    <None Include="Library\PackageCache\com.unity.burst@1df634d836b8\Unity.Burst.Unsafe.xml" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.unitywebrequest\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Vector3Field.uss" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.uielements\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\ColorToolbar.uss" />
+    <None Include="Library\PackageCache\com.unity.collections@aea9d3bd5e19\ValidationExceptions.json" />
+    <None Include="Assets\TextMesh Pro\Sprites\EmojiOne.json" />
     <None Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.modules.ui\package.json" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\Navigation.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Shaders\Box.shader" />
     <None Include="Library\PackageCache\com.unity.multiplayer.center@f3fb577b3546\package.json" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Styles\Components\AssetTargetField.uss" />
+    <None Include="Library\PackageCache\com.unity.dt.app-ui@7b87c8225c06\PackageResources\Shaders\Mask.shader" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
@@ -489,6 +649,30 @@
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.visualscripting@b4d700247d4b\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Grpc.Core">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\ProtoBuffer\Grpc.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Protobuf_Packed">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\Google.Protobuf_Packed.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Collections.LowLevel.ILSupport">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Abstractions.TestingHelpers">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\System.IO.Abstractions.TestingHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Abstractions">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\System.IO.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Hashing">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="netstandard">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\NetStandard\ref\2.1.0\netstandard.dll</HintPath>
     </Reference>
@@ -857,49 +1041,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Unity.VisualScripting.Flow.csproj">
-      <Project>{dd678d89-76f4-6649-8630-cabf42bcde30}</Project>
-      <Name>Unity.VisualScripting.Flow</Name>
+    <ProjectReference Include="Unity.2D.Sprite.Editor.csproj">
+      <Project>{73c468ba-3fab-469e-c057-109f840bcb16}</Project>
+      <Name>Unity.2D.Sprite.Editor</Name>
     </ProjectReference>
-    <ProjectReference Include="Unity.TextMeshPro.Editor.csproj">
-      <Project>{5f0bc03c-2b94-0266-1542-dbebb3a898ba}</Project>
-      <Name>Unity.TextMeshPro.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.VisualScripting.Flow.Editor.csproj">
-      <Project>{3320b9ce-984f-0493-87c1-45a6bf1a259a}</Project>
-      <Name>Unity.VisualScripting.Flow.Editor</Name>
+    <ProjectReference Include="Unity.ML-Agents.Editor.csproj">
+      <Project>{0cbc53db-770d-afe3-caf7-164c64543dc3}</Project>
+      <Name>Unity.ML-Agents.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.TextMeshPro.csproj">
       <Project>{db3bdebb-d712-55a3-290b-2ac30cbf7334}</Project>
       <Name>Unity.TextMeshPro</Name>
     </ProjectReference>
-    <ProjectReference Include="Unity.VisualStudio.Editor.csproj">
-      <Project>{07e17241-5910-0845-d9bc-e181b6d4f943}</Project>
-      <Name>Unity.VisualStudio.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.InputSystem.ForUI.csproj">
-      <Project>{89b30aad-576a-8787-0fc6-da79daec800b}</Project>
-      <Name>Unity.InputSystem.ForUI</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.Timeline.Editor.csproj">
-      <Project>{a6d2e80c-a2d4-7eef-0900-bdd68266f214}</Project>
-      <Name>Unity.Timeline.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.VisualScripting.State.Editor.csproj">
-      <Project>{6e80f456-25f3-a125-b8f9-318774f231b4}</Project>
-      <Name>Unity.VisualScripting.State.Editor</Name>
+    <ProjectReference Include="Unity.ML-Agents.CommunicatorObjects.csproj">
+      <Project>{208403e3-b4ca-ade6-636b-ae72982b09d2}</Project>
+      <Name>Unity.ML-Agents.CommunicatorObjects</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.SettingsProvider.Editor.csproj">
       <Project>{086887aa-4309-eb80-4124-39226b0bb3e1}</Project>
       <Name>Unity.VisualScripting.SettingsProvider.Editor</Name>
     </ProjectReference>
-    <ProjectReference Include="UnityEngine.UI.csproj">
-      <Project>{18693eef-78b1-986f-1e37-12d66c551b07}</Project>
-      <Name>UnityEngine.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.Multiplayer.Center.Common.csproj">
-      <Project>{c64148a1-7999-d263-9437-47df674891b3}</Project>
-      <Name>Unity.Multiplayer.Center.Common</Name>
+    <ProjectReference Include="Unity.ML-Agents.Input.csproj">
+      <Project>{582a5fe8-a03a-bf01-75b0-a4e9cb438d09}</Project>
+      <Name>Unity.ML-Agents.Input</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Model.csproj">
       <Project>{b5c0dcac-6fb6-b8d4-f392-4e255b2aedad}</Project>
@@ -917,14 +1081,6 @@
       <Project>{3a8fbd32-9b22-4145-3053-9916f5b60d4d}</Project>
       <Name>Unity.EditorCoroutines.Editor</Name>
     </ProjectReference>
-    <ProjectReference Include="Unity.VisualScripting.Core.Editor.csproj">
-      <Project>{f17546ed-7217-32dd-3ed7-858446e4725e}</Project>
-      <Name>Unity.VisualScripting.Core.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.Multiplayer.Center.Editor.csproj">
-      <Project>{e3e15085-9390-6c49-8fb4-6c516920c1a2}</Project>
-      <Name>Unity.Multiplayer.Center.Editor</Name>
-    </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.Shared.Editor.csproj">
       <Project>{bf0b89f0-4073-1338-8000-3d8b7c7efa8a}</Project>
       <Name>Unity.VisualScripting.Shared.Editor</Name>
@@ -933,25 +1089,133 @@
       <Project>{c021ca4c-60e7-b0de-29b7-4ffb408e458f}</Project>
       <Name>Unity.PlasticSCM.Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="Unity.Burst.Editor.csproj">
+      <Project>{c42f85d2-ed21-8b0e-b06e-c23956faebe7}</Project>
+      <Name>Unity.Burst.Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.Core.csproj">
       <Project>{41d4bb49-df5d-3404-4643-4feec23e7358}</Project>
       <Name>Unity.VisualScripting.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Mathematics.Editor.csproj">
+      <Project>{28043e34-069c-c7d9-cfb9-f8714b8272cd}</Project>
+      <Name>Unity.Mathematics.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.InferenceEngine.ONNX.Editor.csproj">
+      <Project>{2ce10e8e-0aff-175c-ba2f-96aee5e4ec9b}</Project>
+      <Name>Unity.InferenceEngine.ONNX.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.InferenceEngine.MacBLAS.csproj">
+      <Project>{a4f3e524-4d2f-23d0-5640-8b3de6b53daf}</Project>
+      <Name>Unity.InferenceEngine.MacBLAS</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Rider.Editor.csproj">
+      <Project>{427298ea-13a3-50da-b0ed-3e6a7fd2b78c}</Project>
+      <Name>Unity.Rider.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.InferenceEngine.Editor.csproj">
+      <Project>{1f4b5299-9774-1f6b-ef88-c8aa6602ae7f}</Project>
+      <Name>Unity.InferenceEngine.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.VisualScripting.Flow.csproj">
+      <Project>{dd678d89-76f4-6649-8630-cabf42bcde30}</Project>
+      <Name>Unity.VisualScripting.Flow</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.TextMeshPro.Editor.csproj">
+      <Project>{5f0bc03c-2b94-0266-1542-dbebb3a898ba}</Project>
+      <Name>Unity.TextMeshPro.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.VisualScripting.Flow.Editor.csproj">
+      <Project>{3320b9ce-984f-0493-87c1-45a6bf1a259a}</Project>
+      <Name>Unity.VisualScripting.Flow.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.VisualStudio.Editor.csproj">
+      <Project>{07e17241-5910-0845-d9bc-e181b6d4f943}</Project>
+      <Name>Unity.VisualStudio.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.InputSystem.ForUI.csproj">
+      <Project>{89b30aad-576a-8787-0fc6-da79daec800b}</Project>
+      <Name>Unity.InputSystem.ForUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Collections.csproj">
+      <Project>{589e688b-87e0-8366-2ea2-409aff59ab7f}</Project>
+      <Name>Unity.Collections</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Timeline.Editor.csproj">
+      <Project>{a6d2e80c-a2d4-7eef-0900-bdd68266f214}</Project>
+      <Name>Unity.Timeline.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.VisualScripting.State.Editor.csproj">
+      <Project>{6e80f456-25f3-a125-b8f9-318774f231b4}</Project>
+      <Name>Unity.VisualScripting.State.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.AppUI.Editor.csproj">
+      <Project>{10c15a17-fce4-54e3-0d93-c601da973fd0}</Project>
+      <Name>Unity.AppUI.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Mathematics.csproj">
+      <Project>{7fbe0e16-bf65-7cfa-23e3-0674379bab53}</Project>
+      <Name>Unity.Mathematics</Name>
+    </ProjectReference>
+    <ProjectReference Include="UnityEngine.UI.csproj">
+      <Project>{18693eef-78b1-986f-1e37-12d66c551b07}</Project>
+      <Name>UnityEngine.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Multiplayer.Center.Common.csproj">
+      <Project>{c64148a1-7999-d263-9437-47df674891b3}</Project>
+      <Name>Unity.Multiplayer.Center.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Burst.csproj">
+      <Project>{91c84b02-ca22-f289-9833-a808be3582b2}</Project>
+      <Name>Unity.Burst</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.VisualScripting.Core.Editor.csproj">
+      <Project>{f17546ed-7217-32dd-3ed7-858446e4725e}</Project>
+      <Name>Unity.VisualScripting.Core.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Multiplayer.Center.Editor.csproj">
+      <Project>{e3e15085-9390-6c49-8fb4-6c516920c1a2}</Project>
+      <Name>Unity.Multiplayer.Center.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.ML-Agents.Editor.Input.csproj">
+      <Project>{46f682b7-d475-d25e-829b-9b1d1c5164a4}</Project>
+      <Name>Unity.ML-Agents.Editor.Input</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.State.csproj">
       <Project>{ba73d841-3d0b-9c98-885a-82d03bea429e}</Project>
       <Name>Unity.VisualScripting.State</Name>
     </ProjectReference>
+    <ProjectReference Include="Unity.AppUI.csproj">
+      <Project>{b5dd5bd8-6c06-85ce-10cb-c27b7511e9a6}</Project>
+      <Name>Unity.AppUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.AppUI.Navigation.Editor.csproj">
+      <Project>{45a92a89-78ae-fca8-e8d5-002451ab15bb}</Project>
+      <Name>Unity.AppUI.Navigation.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Collections.Editor.csproj">
+      <Project>{063784a9-cddb-957f-7347-e75c8e37bd3e}</Project>
+      <Name>Unity.Collections.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.ML-Agents.csproj">
+      <Project>{fa02f2a9-0f45-7f11-6abf-80df4b40a289}</Project>
+      <Name>Unity.ML-Agents</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.2D.Sprite.AIIntegration.Editor.csproj">
+      <Project>{c1b1e6cc-d498-6c4a-305f-e4e0358890e2}</Project>
+      <Name>Unity.2D.Sprite.AIIntegration.Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.csproj">
       <Project>{fd6dbb44-64e4-1b2f-6eeb-214a19042f79}</Project>
       <Name>Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection</Name>
     </ProjectReference>
+    <ProjectReference Include="Unity.InferenceEngine.iOSBLAS.csproj">
+      <Project>{6b0eabf0-fa2e-12ba-9920-43abee005898}</Project>
+      <Name>Unity.InferenceEngine.iOSBLAS</Name>
+    </ProjectReference>
     <ProjectReference Include="Unity.InputSystem.csproj">
       <Project>{fcbb070a-0d1f-4841-0e39-3113c2a691d2}</Project>
       <Name>Unity.InputSystem</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.Rider.Editor.csproj">
-      <Project>{427298ea-13a3-50da-b0ed-3e6a7fd2b78c}</Project>
-      <Name>Unity.Rider.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.Performance.Profile-Analyzer.Editor.csproj">
       <Project>{e7384bb4-deef-3674-d0cb-f0e8f36a25b2}</Project>
@@ -964,6 +1228,14 @@
     <ProjectReference Include="UnityEditor.UI.csproj">
       <Project>{3a24e935-d651-14d2-7933-efe2d308b4b0}</Project>
       <Name>UnityEditor.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.AppUI.Redux.csproj">
+      <Project>{fd6d365b-0a06-c9a2-622d-7fe37db00d8d}</Project>
+      <Name>Unity.AppUI.Redux</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.InferenceEngine.csproj">
+      <Project>{852ca812-ffd4-7504-745d-03da05e008c6}</Project>
+      <Name>Unity.InferenceEngine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

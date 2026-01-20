@@ -12,7 +12,7 @@ public class TcpClientController : MonoBehaviour
     public string host = "127.0.0.1";
     public int port = 5000;
     
-    public AgentController agent;
+    public HeuristicMovement agent;
     public static readonly ConcurrentQueue<byte[]> FrameQueue = new ConcurrentQueue<byte[]>();
     
     private TcpClient _client;
@@ -103,6 +103,12 @@ public class TcpClientController : MonoBehaviour
             {
                 if (agent != null)
                     agent.MoveForward(dist);
+            });
+        }
+        else if (action == "RESET")
+        {
+            UnityMainThreadDispatcher.Enqueue(() => {
+                MazeManager.Instance.GenerateNewLevel();
             });
         }
         else

@@ -46,9 +46,9 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\DocCodeSamples.Tests\GamepadExample.cs" />
     <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\DocCodeSamples.Tests\InputSystemUIInputModuleAssignActionsExample.cs" />
     <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\DocCodeSamples.Tests\GamepadHapticsExample.cs" />
-    <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\DocCodeSamples.Tests\GamepadExample.cs" />
     <None Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\DocCodeSamples.Tests\DocCodeSamples.asmdef" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>

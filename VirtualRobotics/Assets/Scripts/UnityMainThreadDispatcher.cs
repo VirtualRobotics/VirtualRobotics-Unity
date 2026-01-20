@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UnityMainThreadDispatcher : MonoBehaviour
 {
-    private static readonly Queue<Action> _executionQueue = new Queue<Action>();
+    private static readonly Queue<Action> ExecutionQueue = new Queue<Action>();
     private static UnityMainThreadDispatcher _instance;
 
     void Awake()
@@ -22,19 +22,19 @@ public class UnityMainThreadDispatcher : MonoBehaviour
 
     public static void Enqueue(Action action)
     {
-        lock (_executionQueue)
+        lock (ExecutionQueue)
         {
-            _executionQueue.Enqueue(action);
+            ExecutionQueue.Enqueue(action);
         }
     }
 
     void Update()
     {
-        lock (_executionQueue)
+        lock (ExecutionQueue)
         {
-            while (_executionQueue.Count > 0)
+            while (ExecutionQueue.Count > 0)
             {
-                _executionQueue.Dequeue().Invoke();
+                ExecutionQueue.Dequeue().Invoke();
             }
         }
     }
