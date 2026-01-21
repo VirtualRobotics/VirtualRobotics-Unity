@@ -72,7 +72,8 @@ public class RLAgentController : Agent
     }
 
     private void OnTriggerEnter(Collider other)
-    {
+    {   
+        if (!this.enabled) return;
         if (other.CompareTag("Goal"))
         {
             Debug.Log("AI: Cel osiągnięty!");

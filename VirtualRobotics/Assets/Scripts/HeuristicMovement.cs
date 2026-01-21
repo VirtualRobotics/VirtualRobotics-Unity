@@ -32,7 +32,8 @@ public class HeuristicMovement : MonoBehaviour
     }
     
     private void OnTriggerEnter(Collider other)
-    {
+    {   
+        if (!this.enabled) return;
         if (other.CompareTag("Goal"))
         {
             Debug.Log("[AGENT] Cel osiągnięty! Resetowanie poziomu...");

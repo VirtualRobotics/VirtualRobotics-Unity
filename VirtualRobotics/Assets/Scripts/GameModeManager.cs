@@ -1,17 +1,19 @@
 using UnityEngine;
 using Unity.MLAgents;
-using Unity.MLAgents.Policies;
 
 public class GameModeManager : MonoBehaviour
 {
-    [Header("Referencje do Robota")]
+    [Header("Referencje")]
+    public CameraStreamer cameraStreamer; // <--- Używamy Twojej nazwy
+    
     public GameObject robot;
     public HeuristicMovement heuristicScript;
     public RLAgentController rlScript;
-    
-    [Header("Inne systemy")]
     public TcpClientController tcpController;
-    public CameraStreamer cameraStreamer;
+    
+    // Te pola możesz usunąć, bo CameraStreamer sam to obsłuży:
+    // public Camera agentCamera; 
+    // public RenderTexture mazeViewTexture;
 
     void Start()
     {
@@ -21,34 +23,36 @@ public class GameModeManager : MonoBehaviour
     void SetupGameMode()
     {
         var mode = GameSettings.CurrentMode;
-        Debug.Log($"[GameModeManager] Ustawianie trybu: {mode}");
+
+        // Upewnij się, że CameraStreamer jest WŁĄCZONY jako komponent,
+        // bo on musi renderować obraz dla UI w obu trybach.
+        if (cameraStreamer != null) cameraStreamer.enabled = true;
 
         if (mode == GameSettings.GameMode.HeuristicCV)
         {
-            // --- TRYB 1: Python + OpenCV ---
-            // Włączamy:
+            // --- TRYB HEURYSTYCZNY ---
+            // Włączamy wysyłanie danych do Pythona
+            if (cameraStreamer) cameraStreamer.enableStreaming = true; 
+            
             if(heuristicScript) heuristicScript.enabled = true;
             if(tcpController) tcpController.enabled = true;
-            if(cameraStreamer) cameraStreamer.enabled = true;
-
-            // Wyłączamy:
             if(rlScript) rlScript.enabled = false;
-            // Ważne: ML-Agents ma dodatkowe komponenty, które warto wyłączyć
+            
             var decider = robot.GetComponent<DecisionRequester>();
             if (decider) decider.enabled = false;
         }
         else if (mode == GameSettings.GameMode.ReinforcementLearning)
         {
-            // --- TRYB 2: Sieć Neuronowa (RL) ---
-            // Włączamy:
+            // --- TRYB RL ---
+            // Wyłączamy wysyłanie danych (optymalizacja), ale UI nadal działa
+            if (cameraStreamer) cameraStreamer.enableStreaming = false;
+
             if(rlScript) rlScript.enabled = true;
             var decider = robot.GetComponent<DecisionRequester>();
             if (decider) decider.enabled = true;
 
-            // Wyłączamy:
             if(heuristicScript) heuristicScript.enabled = false;
             if(tcpController) tcpController.enabled = false;
-            if(cameraStreamer) cameraStreamer.enabled = false;
         }
     }
 }
