@@ -33,24 +33,21 @@ public class GameUIController : MonoBehaviour
     public void OnResetClicked()
     {
         Debug.Log("Wymuszony reset poziomu.");
-        
-        if (GameSettings.CurrentMode == GameSettings.GameMode.ReinforcementLearning && rlAgent != null && rlAgent.isActiveAndEnabled)
+    
+        if (GameSettings.CurrentMode == GameSettings.GameMode.ReinforcementLearning)
         {
-            rlAgent.EndEpisode(); 
+            if (rlAgent != null && rlAgent.isActiveAndEnabled)
+            {
+                rlAgent.EndEpisode(); 
+            }
         }
         else
         {
             MazeManager.Instance.GenerateNewLevel();
-            
-            var movement = MazeManager.Instance.agent; 
-            if (movement != null)
+        
+            if (MazeManager.Instance.agent != null)
             {
-                var rb = movement.GetComponent<Rigidbody>();
-                if(rb) 
-                {
-                    rb.linearVelocity = Vector3.zero;
-                    rb.angularVelocity = Vector3.zero;
-                }
+                MazeManager.Instance.agent.ResetAgent(MazeManager.Instance.agent.transform.position);
             }
         }
     }

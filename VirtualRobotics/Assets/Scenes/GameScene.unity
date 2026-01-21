@@ -698,11 +698,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde5ac7e59104f14797924a659dd6341, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameModeManager
+  cameraStreamer: {fileID: 1713933846}
   robot: {fileID: 760116682}
   heuristicScript: {fileID: 760116689}
   rlScript: {fileID: 760116690}
   tcpController: {fileID: 1569947042}
-  cameraStreamer: {fileID: 1713933846}
 --- !u!4 &748373947
 Transform:
   m_ObjectHideFlags: 0
@@ -750,10 +750,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 760116682}
-  serializedVersion: 5
+  serializedVersion: 4
   m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_Drag: 0
+  m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -813,8 +813,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -836,7 +834,6 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -896,6 +893,7 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
   generateNewMazeOnReset: 1
+  maxTimePerLevel: 60
   moveSpeed: 2
   turnSpeed: 120
 --- !u!114 &760116691
@@ -1625,9 +1623,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8b4fce521dbd7a47b47d5d1d4040eb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraStreamer
-  cam: {fileID: 0}
+  targetTexture: {fileID: 8400000, guid: 989bb38da13114743baafd7ec414da11, type: 2}
+  enableStreaming: 0
   captureRate: 0.1
-  jpegQuality: 60
 --- !u!4 &1713933848
 Transform:
   m_ObjectHideFlags: 0
