@@ -20,19 +20,19 @@ public class GameUIController : MonoBehaviour
     {
         if (GameSettings.CurrentMode == GameSettings.GameMode.HeuristicCV)
         {
-            modeText.text = "TRYB: HEURYSTYKA";
+            modeText.text = "MODE: HEURISTIC";
             modeText.color = new Color(1f, 1f, 1f);
         }
         else
         {
-            modeText.text = "TRYB: RL";
+            modeText.text = "MODE: RL";
             modeText.color = new Color(1f, 1f, 1f);
         }
     }
 
     public void OnResetClicked()
     {
-        Debug.Log("Wymuszony reset poziomu.");
+        Debug.Log("Forced level reset.");
     
         if (GameSettings.CurrentMode == GameSettings.GameMode.ReinforcementLearning)
         {

@@ -309,7 +309,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1197099084086888485, guid: eb8c8441b75c5a8438a89d810da47286, type: 3}
       propertyPath: m_text
-      value: 'START: AI LEARNING'
+      value: 'MODE: RL'
       objectReference: {fileID: 0}
     - target: {fileID: 2688042931250410463, guid: eb8c8441b75c5a8438a89d810da47286, type: 3}
       propertyPath: m_Name
@@ -438,7 +438,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1197099084086888485, guid: eb8c8441b75c5a8438a89d810da47286, type: 3}
       propertyPath: m_text
-      value: 'START: HEURYSTYKA'
+      value: 'MODE: HEURISTIC'
       objectReference: {fileID: 0}
     - target: {fileID: 2688042931250410463, guid: eb8c8441b75c5a8438a89d810da47286, type: 3}
       propertyPath: m_Name
@@ -567,7 +567,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1197099084086888485, guid: eb8c8441b75c5a8438a89d810da47286, type: 3}
       propertyPath: m_text
-      value: POWROT
+      value: BACK
       objectReference: {fileID: 0}
     - target: {fileID: 2688042931250410463, guid: eb8c8441b75c5a8438a89d810da47286, type: 3}
       propertyPath: m_Name
@@ -1369,7 +1369,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'O projekcie:'
+  m_text: 'About Project:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 73238037fd131fc48a8b5f20b7c2d088, type: 2}
   m_sharedMaterial: {fileID: -3749970928990114825, guid: 73238037fd131fc48a8b5f20b7c2d088, type: 2}
@@ -2060,7 +2060,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1197099084086888485, guid: eb8c8441b75c5a8438a89d810da47286, type: 3}
       propertyPath: m_text
-      value: O PROJEKCIE
+      value: PROJECT OVERVIEW
       objectReference: {fileID: 0}
     - target: {fileID: 2688042931250410463, guid: eb8c8441b75c5a8438a89d810da47286, type: 3}
       propertyPath: m_Name

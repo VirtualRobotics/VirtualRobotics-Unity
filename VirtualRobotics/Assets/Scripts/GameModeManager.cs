@@ -3,17 +3,13 @@ using Unity.MLAgents;
 
 public class GameModeManager : MonoBehaviour
 {
-    [Header("Referencje")]
-    public CameraStreamer cameraStreamer; // <--- Używamy Twojej nazwy
+    [Header("References")]
+    public CameraStreamer cameraStreamer;
     
     public GameObject robot;
     public HeuristicMovement heuristicScript;
     public RLAgentController rlScript;
     public TcpClientController tcpController;
-    
-    // Te pola możesz usunąć, bo CameraStreamer sam to obsłuży:
-    // public Camera agentCamera; 
-    // public RenderTexture mazeViewTexture;
 
     void Start()
     {
@@ -24,14 +20,11 @@ public class GameModeManager : MonoBehaviour
     {
         var mode = GameSettings.CurrentMode;
 
-        // Upewnij się, że CameraStreamer jest WŁĄCZONY jako komponent,
-        // bo on musi renderować obraz dla UI w obu trybach.
         if (cameraStreamer != null) cameraStreamer.enabled = true;
 
         if (mode == GameSettings.GameMode.HeuristicCV)
         {
-            // --- TRYB HEURYSTYCZNY ---
-            // Włączamy wysyłanie danych do Pythona
+            // --- HEURISTIC MODE ---
             if (cameraStreamer) cameraStreamer.enableStreaming = true; 
             
             if(heuristicScript) heuristicScript.enabled = true;
@@ -43,8 +36,7 @@ public class GameModeManager : MonoBehaviour
         }
         else if (mode == GameSettings.GameMode.ReinforcementLearning)
         {
-            // --- TRYB RL ---
-            // Wyłączamy wysyłanie danych (optymalizacja), ale UI nadal działa
+            // --- RL MODE ---
             if (cameraStreamer) cameraStreamer.enableStreaming = false;
 
             if(rlScript) rlScript.enabled = true;

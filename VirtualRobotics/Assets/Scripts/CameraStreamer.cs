@@ -4,12 +4,12 @@ using System.Collections;
 [RequireComponent(typeof(Camera))]
 public class CameraStreamer : MonoBehaviour
 {
-    [Header("Konfiguracja")]
-    public RenderTexture targetTexture; // Tutaj wrzuć "mazeview"
-    public bool enableStreaming = false; // To będzie przełączał GameModeManager
+    [Header("Configuration")]
+    public RenderTexture targetTexture;
+    public bool enableStreaming = false;
     
-    [Header("Ustawienia Streamingu (tylko Heurystyka)")]
-    public float captureRate = 0.1f; // Co ile sekund wysyłać klatkę do Pythona
+    [Header("Streaming Settings (Heuristic Only)")]
+    public float captureRate = 0.1f;
     
     private Camera _cam;
     private Texture2D _tempTexture;
@@ -19,18 +19,18 @@ public class CameraStreamer : MonoBehaviour
     {
         _cam = GetComponent<Camera>();
 
-        // Zabezpieczenie: Pobierz teksturę z kamery, jeśli nie przypisano w inspectorze
+        // Safety check: Get texture from camera if not assigned in Inspector
         if (targetTexture == null) targetTexture = _cam.targetTexture;
         
         if (targetTexture != null)
         {
             _cam.targetTexture = targetTexture;
-            // Alokujemy pamięć na teksturę 2D tylko raz na starcie (optymalizacja)
+            // Allocate memory for 2D texture only once at start (optimization)
             _tempTexture = new Texture2D(targetTexture.width, targetTexture.height, TextureFormat.RGB24, false);
         }
         else
         {
-            Debug.LogError("[CameraStreamer] Brak Target Texture! Podgląd UI nie zadziała.");
+            Debug.LogError("[CameraStreamer] Missing Target Texture! UI preview will not work.");
             this.enabled = false;
         }
     }
@@ -39,12 +39,11 @@ public class CameraStreamer : MonoBehaviour
     {
         if (_cam == null || targetTexture == null) return;
 
-        // 1. ZAWSZE: Wymuszamy renderowanie kamery na teksturę UI.
-        // Dzięki temu w trybie RL obraz będzie widoczny na ekranie.
+        // 1. ALWAYS: Force camera rendering to UI texture.
         _cam.targetTexture = targetTexture;
         _cam.Render();
 
-        // 2. OPCJONALNIE: Wysyłamy dane do Pythona (tylko gdy włączony streaming)
+        // 2. OPTIONALLY: Send data to Python (only when streaming is enabled)
         if (enableStreaming)
         {
             ProcessStreaming();
@@ -57,26 +56,20 @@ public class CameraStreamer : MonoBehaviour
         if (_timer < captureRate) return;
         _timer = 0f;
 
-        // Zapamiętujemy aktualną aktywną teksturę Unity
         RenderTexture currentRT = RenderTexture.active;
         
-        // Ustawiamy naszą teksturę jako źródło do czytania pikseli
+        // Set our texture as the source for reading pixels
         RenderTexture.active = targetTexture;
 
-        // Zczytujemy piksele (to obciąża CPU, dlatego robimy to rzadziej przez captureRate)
         _tempTexture.ReadPixels(new Rect(0, 0, targetTexture.width, targetTexture.height), 0, 0);
         _tempTexture.Apply();
 
-        // Przywracamy poprzednią
         RenderTexture.active = currentRT;
 
-        // Kompresja do JPG
         byte[] jpgBytes = _tempTexture.EncodeToJPG(60); 
         
-        // Wysyłka do kolejki (zakładam, że w TcpClientController masz statyczną kolejkę FrameQueue)
         if (TcpClientController.FrameQueue != null)
         {
-            // ZABEZPIECZENIE: Czyścimy kolejkę, jeśli Python nie nadąża odbierać
             while (TcpClientController.FrameQueue.Count > 3)
             {
                 TcpClientController.FrameQueue.TryDequeue(out _);

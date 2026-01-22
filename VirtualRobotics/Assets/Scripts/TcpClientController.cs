@@ -8,11 +8,11 @@ using UnityEngine;
 
 public class TcpClientController : MonoBehaviour
 {
-    [Header("Ustawienia Sieci")]
+    [Header("Network Settings")]
     public string host = "127.0.0.1";
     public int port = 5000;
     
-    [Header("Referencje")]
+    [Header("References")]
     public HeuristicMovement agent;
     
     public static readonly ConcurrentQueue<byte[]> FrameQueue = new ConcurrentQueue<byte[]>();
@@ -26,7 +26,7 @@ public class TcpClientController : MonoBehaviour
 
     void Start()
     {
-        // 1. Czyścimy kolejkę ze starych danych z poprzedniej gry
+        // 1. Clear queue from potential old data
         while (FrameQueue.TryDequeue(out _)) { }
 
         _running = true;
@@ -61,14 +61,14 @@ public class TcpClientController : MonoBehaviour
             }
         }
         
-        Debug.Log("[TCP] Połączenie zamknięte, wątek wyczyszczony.");
+        Debug.Log("[TCP] Connection closed, thread cleaned up.");
     }
 
     private void NetworkLoop()
     {
         try
         {
-            DebugLog("[UNITY] Próba połączenia z Pythonem...");
+            DebugLog("[UNITY] Attempting to connect to Python...");
             _client = new TcpClient();
             
             var result = _client.BeginConnect(host, port, null, null);
@@ -76,14 +76,14 @@ public class TcpClientController : MonoBehaviour
 
             if (!success)
             {
-                throw new Exception("Timeout połączenia. Czy serwer Python działa?");
+                throw new Exception("Connection timeout. Is the Python server running?");
             }
 
             _client.EndConnect(result);
             _stream = _client.GetStream();
             _reader = new StreamReader(_stream, Encoding.UTF8);
 
-            DebugLog("[UNITY] Połączono z serwerem!");
+            DebugLog("[UNITY] Connected to server!");
 
             while (_running)
             {
@@ -99,7 +99,7 @@ public class TcpClientController : MonoBehaviour
                     }
                     catch (Exception e)
                     {
-                        DebugLog("[UNITY] Błąd wysyłania obrazu: " + e.Message);
+                        DebugLog("[UNITY] Error sending image: " + e.Message);
                         break;
                     }
                 }
@@ -113,7 +113,7 @@ public class TcpClientController : MonoBehaviour
                     }
                     else
                     {
-                        DebugLog("[UNITY] Serwer zamknął połączenie.");
+                        DebugLog("[UNITY] Server closed the connection.");
                         break;
                     }
                 }
@@ -123,13 +123,13 @@ public class TcpClientController : MonoBehaviour
         }
         catch (ThreadAbortException) 
         { 
-            // Ignorujemy błąd przy zamykaniu gry
+            // Ignore error when closing the game
         }
         catch (Exception e)
         {
             if (_running) 
             {
-                DebugLog("[UNITY] Błąd sieci: " + e.Message);
+                DebugLog("[UNITY] Network error: " + e.Message);
             }
         }
         finally
@@ -172,7 +172,7 @@ public class TcpClientController : MonoBehaviour
         }
         else
         {
-            DebugLog("[UNITY] Nieznana komenda: " + command);
+            DebugLog("[UNITY] Unknown command: " + command);
         }
     }
     

@@ -372,8 +372,8 @@
     <Compile Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\Editor\Settings\DiffAndMergeOptionsFoldout.cs" />
     <Compile Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\Editor\Views\Changesets\ChangesetExplorerView.cs" />
     <Compile Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\Editor\AssetMenu\ProjectViewCloudDriveAssetMenu.cs" />
-    <Compile Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\Editor\UVCSToolbar\PopupWindow\Operations\ControlledPopupOperations.cs" />
     <Compile Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\Editor\UI\GetWindowIfOpened.cs" />
+    <Compile Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\Editor\UVCSToolbar\PopupWindow\Operations\ControlledPopupOperations.cs" />
     <Compile Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\Editor\Views\PendingChanges\ChangeCategoryTreeViewItem.cs" />
     <Compile Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\Editor\Views\Locks\LocksTab.cs" />
     <Compile Include="Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\Editor\CloudDrive\Welcome\WelcomeView.cs" />

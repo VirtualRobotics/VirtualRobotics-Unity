@@ -279,8 +279,8 @@
     <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\InputSystem\Utilities\DynamicBitfield.cs" />
     <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\InputSystem\Editor\UITKAssetEditor\StateContainer.cs" />
     <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\InputSystem\Actions\Composites\OneModifierComposite.cs" />
-    <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\InputSystem\Editor\PropertyDrawers\InputActionReferenceSearchProviders.cs" />
     <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\InputSystem\Utilities\DisplayStringFormatAttribute.cs" />
+    <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\InputSystem\Editor\PropertyDrawers\InputActionReferenceSearchProviders.cs" />
     <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\InputSystem\Controls\Processors\CompensateRotationProcessor.cs" />
     <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\InputSystem\Editor\Settings\InputSettingsProvider.cs" />
     <Compile Include="Library\PackageCache\com.unity.inputsystem@be6c4fd0abf5\InputSystem\State\InputState.cs" />
@@ -837,8 +837,14 @@
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.2.12f1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="System.IO.Abstractions">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\System.IO.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.YamlDotNet">
       <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.visualscripting@b4d700247d4b\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Collections.LowLevel.ILSupport">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ext.nunit@031a54704bff\net40\unity-custom\nunit.framework.dll</HintPath>
@@ -861,32 +867,26 @@
     <Reference Include="unityplastic">
       <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.collab-proxy@b8d65294b30f\Lib\Editor\unityplastic.dll</HintPath>
     </Reference>
+    <Reference Include="Google.Protobuf_Packed">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\Google.Protobuf_Packed.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Hashing">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.visualscripting@b4d700247d4b\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.VisualScripting.TextureAssets">
-      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.visualscripting@b4d700247d4b\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
     </Reference>
     <Reference Include="Grpc.Core">
       <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\ProtoBuffer\Grpc.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.VisualScripting.TextureAssets">
+      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.visualscripting@b4d700247d4b\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Protobuf_Packed">
-      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\Google.Protobuf_Packed.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Collections.LowLevel.ILSupport">
-      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
-    </Reference>
     <Reference Include="System.IO.Abstractions.TestingHelpers">
       <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\System.IO.Abstractions.TestingHelpers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Abstractions">
-      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.ml-agents@592fae96fab2\Plugins\System.IO.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Hashing">
-      <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>C:\Users\oskar\virtual-robotics\unity\VirtualRobotics\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>

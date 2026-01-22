@@ -6,9 +6,9 @@ using Unity.MLAgents.Sensors;
 [RequireComponent(typeof(Rigidbody))]
 public class RLAgentController : Agent
 {
-    [Header("Ustawienia Gry")]
+    [Header("Game Settings")]
     public bool generateNewMazeOnReset = true;
-    public float maxTimePerLevel = 60f;
+    public float maxTimePerLevel = 120f;
 
     [Header("Movement")]
     public float moveSpeed = 2f;
@@ -20,7 +20,7 @@ public class RLAgentController : Agent
     public override void Initialize()
     {
         _rb = GetComponent<Rigidbody>();
-        // Zamrażamy rotacje, żeby robot się nie przewracał
+        // Freeze rotation to prevent the robot from tipping over
         _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
@@ -37,26 +37,26 @@ public class RLAgentController : Agent
         }
     }
 
-    // Dodajemy Update, żeby pilnować czasu w trybie gry
+    // Update loop to track time during the episode
     void Update()
     {
         _timeSinceStart += Time.deltaTime;
         
-        // Bezpiecznik: Jeśli minął czas, poddaj się i spróbuj nową mapę
+        // Failsafe: If time runs out, give up and try a new map
         if (_timeSinceStart > maxTimePerLevel)
         {
-            Debug.Log("Czas minął! Resetowanie agenta.");
+            Debug.Log("Time's up! Resetting agent.");
             EndEpisode();
         }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        // 1. Odbiór decyzji z sieci neuronowej
+        // 1. Receive decisions from neural network
         float move = actions.ContinuousActions[0]; 
         float rotate = actions.ContinuousActions[1];
 
-        // 2. Wykonanie ruchu
+        // 2. Execute movement
         Vector3 moveDir = transform.forward * (Mathf.Clamp(move, -1f, 1f) * moveSpeed * Time.fixedDeltaTime);
         _rb.MovePosition(_rb.position + moveDir);
 
@@ -76,7 +76,7 @@ public class RLAgentController : Agent
         if (!this.enabled) return;
         if (other.CompareTag("Goal"))
         {
-            Debug.Log("AI: Cel osiągnięty!");
+            Debug.Log("AI: Goal reached!");
             EndEpisode();
         }
     }

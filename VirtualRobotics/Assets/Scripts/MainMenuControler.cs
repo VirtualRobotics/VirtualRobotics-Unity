@@ -4,7 +4,7 @@ using TMPro;
 
 public class MainMenuController : MonoBehaviour
 {
-    [Header("Konfiguracja")]
+    [Header("Configuration")]
     public string gameSceneName = "GameScene";
     public GameObject infoPanel;
 
@@ -15,7 +15,7 @@ public class MainMenuController : MonoBehaviour
 
     public void StartHeuristicMode()
     {
-        Debug.Log("Wybrano tryb: Heurystyka (Python/CV)");
+        Debug.Log("Mode chosen: Heuristic");
         
         GameSettings.CurrentMode = GameSettings.GameMode.HeuristicCV;
         
@@ -24,7 +24,7 @@ public class MainMenuController : MonoBehaviour
 
     public void StartRLMode()
     {
-        Debug.Log("Wybrano tryb: AI Learning (RL)");
+        Debug.Log("Mode chosen: RL");
         
         GameSettings.CurrentMode = GameSettings.GameMode.ReinforcementLearning;
         

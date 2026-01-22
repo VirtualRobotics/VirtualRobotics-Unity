@@ -36,7 +36,7 @@ public class HeuristicMovement : MonoBehaviour
         if (!this.enabled) return;
         if (other.CompareTag("Goal"))
         {
-            Debug.Log("[AGENT] Cel osiągnięty! Resetowanie poziomu...");
+            Debug.Log("[AGENT] Goal reached! Generating new level..");
             if (MazeManager.Instance != null)
             {
                 MazeManager.Instance.GenerateNewLevel();
