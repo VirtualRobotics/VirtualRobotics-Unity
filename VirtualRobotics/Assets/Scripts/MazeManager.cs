@@ -80,6 +80,21 @@ public class MazeManager : MonoBehaviour
         }
     }
     
+    public void ResetAgentPositionOnly()
+    {
+        if (agent != null)
+        {
+            agent.ResetAgent(new Vector3(1, 0.2f, 1));
+            
+            var rb = agent.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+        }
+    }
+    
     public void GenerateNewLevel()
     {
         // 1. Clean up old objects
@@ -90,15 +105,34 @@ public class MazeManager : MonoBehaviour
 
         // 2. Initialize array
         _maze = new int[width, height];
-        for (int x = 0; x < width; x++) {
-            for (int z = 0; z < height; z++) {
-                _maze[x, z] = 1;
+        
+        if (GameSettings.GenerateEmptyMaze)
+        {
+            // Opcja Pusta: Wypełnij zerami (podłoga), ustaw jedynki (ściany) tylko na krawędziach
+            for (int x = 0; x < width; x++)
+            {
+                for (int z = 0; z < height; z++)
+                {
+                    // Jeśli krawędź -> Ściana (1), w przeciwnym razie -> Podłoga (0)
+                    if (x == 0 || z == 0 || x == width - 1 || z == height - 1)
+                        _maze[x, z] = 1;
+                    else
+                        _maze[x, z] = 0;
+                }
             }
         }
+        else
+        {
+            for (int x = 0; x < width; x++) {
+                for (int z = 0; z < height; z++) {
+                    _maze[x, z] = 1;
+                }
+            }
 
-        // 3. DFS Algorithm - carves tunnels (0) in walls (1)
-        ApplyDFS(1, 1);
-
+            // 3. DFS Algorithm - carves tunnels (0) in walls (1)
+            ApplyDFS(1, 1);
+        }
+        
         // 4. Physical construction
         for (int x = 0; x < width; x++) {
             for (int z = 0; z < height; z++) {

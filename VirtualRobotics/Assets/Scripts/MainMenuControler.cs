@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using TMPro;
 
 public class MainMenuController : MonoBehaviour
@@ -12,6 +13,7 @@ public class MainMenuController : MonoBehaviour
     public GameObject configPanel;
     public TMP_InputField widthInput;
     public TMP_InputField heightInput;
+    public Toggle emptyMazeToggle;
     
     void Start()
     {
@@ -53,6 +55,11 @@ public class MainMenuController : MonoBehaviour
         {
             configPanel.SetActive(true);
             ResetInputs();
+            
+            if (emptyMazeToggle != null)
+            {
+                emptyMazeToggle.isOn = GameSettings.GenerateEmptyMaze;
+            }
         }
         else
         {
@@ -63,6 +70,12 @@ public class MainMenuController : MonoBehaviour
     public void OnStartGameClicked()
     {
         SaveSizeFromInputs();
+        
+        if (emptyMazeToggle != null)
+        {
+            GameSettings.GenerateEmptyMaze = emptyMazeToggle.isOn;
+            Debug.Log($"Empty maze mode: {GameSettings.GenerateEmptyMaze}");
+        }
 
         LoadGameScene();
     }

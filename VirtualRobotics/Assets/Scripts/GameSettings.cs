@@ -11,4 +11,7 @@ public static class GameSettings
     
     public static int MazeWidth = 11;
     public static int MazeHeight = 11;
+    
+    public static bool KeepMapLayout = false;
+    public static bool GenerateEmptyMaze = false;
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
@@ -11,7 +12,9 @@ public class GameUIController : MonoBehaviour
     public TMP_InputField heightInput;
 
     [Header("Agent References")]
-    public RLAgentController rlAgent; 
+    public RLAgentController rlAgent;
+    
+    public Toggle keepMapToggle;
 
     void Start()
     {
@@ -19,6 +22,8 @@ public class GameUIController : MonoBehaviour
         
         if (widthInput) widthInput.text = GameSettings.MazeWidth.ToString();
         if (heightInput) heightInput.text = GameSettings.MazeHeight.ToString();
+        
+        if (keepMapToggle) keepMapToggle.isOn = GameSettings.KeepMapLayout;
     }
 
     void UpdateModeText()
@@ -51,11 +56,27 @@ public class GameUIController : MonoBehaviour
             }
         }
         
+        if (keepMapToggle != null) 
+        {
+            GameSettings.KeepMapLayout = keepMapToggle.isOn;
+        }
+
+        bool shouldRegenerate = sizeChanged || !GameSettings.KeepMapLayout;
+        
         if (GameSettings.CurrentMode == GameSettings.GameMode.ReinforcementLearning)
         {
             if (MazeManager.Instance != null)
             {
-                MazeManager.Instance.ReloadAndGenerate();
+                if (shouldRegenerate)
+                {
+                    Debug.Log("RL: New maze generation.");
+                    MazeManager.Instance.ReloadAndGenerate();
+                }
+                else
+                {
+                    Debug.Log("RL: Keep old maze.");
+                    MazeManager.Instance.ResetAgentPositionOnly();
+                }
             }
 
             if (rlAgent != null)
@@ -63,7 +84,7 @@ public class GameUIController : MonoBehaviour
                 Rigidbody rb = rlAgent.GetComponent<Rigidbody>();
                 if (rb != null)
                 {
-                    rb.linearVelocity = Vector3.zero;
+                    rb.linearVelocity = Vector3.zero; 
                     rb.angularVelocity = Vector3.zero;
                     rb.Sleep();
                 }
@@ -72,7 +93,7 @@ public class GameUIController : MonoBehaviour
                 {
                     rlAgent.EndEpisode(); 
                 }
-            
+        
                 if (rb != null) rb.WakeUp();
             }
         }
@@ -80,10 +101,17 @@ public class GameUIController : MonoBehaviour
         {
             if (MazeManager.Instance != null)
             {
-                MazeManager.Instance.ReloadAndGenerate();
+                if (shouldRegenerate)
+                {
+                    MazeManager.Instance.ReloadAndGenerate();
+                }
+                else
+                {
+                    MazeManager.Instance.ResetAgentPositionOnly();
+                }
             }
-            
-            if (MazeManager.Instance.agent != null)
+        
+            if (MazeManager.Instance != null && MazeManager.Instance.agent != null)
             {
                 MazeManager.Instance.agent.ResetAgent(new Vector3(1, 0.2f, 1));
             }
