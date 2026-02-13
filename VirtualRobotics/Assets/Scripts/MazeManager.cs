@@ -9,19 +9,77 @@ public class MazeManager : MonoBehaviour
     public int width = 11;
     public int height = 11;
     public float cellSize = 1f;
+    
+    [Header("Agents Prefabs")]
+    public GameObject inferenceAgentPrefab;
+    public GameObject trainingAgentPrefab;
 
     [Header("Prefabs and References")]
-    public HeuristicMovement agent;
     public GameObject wallPrefab;
     public GameObject floorPrefab;
     public GameObject goalPrefab;
+    
+    [HideInInspector] 
+    public GameObject currentAgentObject; 
+    [HideInInspector] 
+    public HeuristicMovement agent;
 
     private int[,] _maze;
 
     void Awake() => Instance = this;
 
-    void Start() => GenerateNewLevel();
+    void Start()
+    {
+        SpawnAgentBasedOnMode();
+        ReloadAndGenerate();
+    }
+    
+    public void ReloadAndGenerate()
+    {
+        width = GameSettings.MazeWidth;
+        height = GameSettings.MazeHeight;
 
+        if (width % 2 == 0) width++;
+        if (height % 2 == 0) height++;
+
+        GenerateNewLevel();
+    }
+    
+    void SpawnAgentBasedOnMode()
+    {
+        var existingAgent = GameObject.FindGameObjectWithTag("Agent");
+        if (existingAgent != null) Destroy(existingAgent);
+
+        GameObject prefabToSpawn;
+
+        if (GameSettings.CurrentMode == GameSettings.GameMode.Training)
+        {
+            prefabToSpawn = trainingAgentPrefab;
+            Debug.Log("[MazeManager] Training Agent");
+        }
+        else
+        {
+            prefabToSpawn = inferenceAgentPrefab;
+            Debug.Log("[MazeManager] Standard Agent");
+        }
+
+        if (prefabToSpawn != null)
+        {
+            currentAgentObject = Instantiate(prefabToSpawn, new Vector3(1, 0, 1), Quaternion.identity);
+            
+            agent = currentAgentObject.GetComponent<HeuristicMovement>();
+            
+            var gameModeMgr = FindObjectOfType<GameModeManager>();
+            if (gameModeMgr != null)
+            {
+                gameModeMgr.robot = currentAgentObject;
+                gameModeMgr.heuristicScript = currentAgentObject.GetComponent<HeuristicMovement>();
+                gameModeMgr.rlScript = currentAgentObject.GetComponent<RLAgentController>();
+                gameModeMgr.ForceSetup(); 
+            }
+        }
+    }
+    
     public void GenerateNewLevel()
     {
         // 1. Clean up old objects
@@ -60,9 +118,11 @@ public class MazeManager : MonoBehaviour
 
         // 5. Place goal and reset agent
         PlaceGoal();
-        
-        float agentY = 0.2f;
-        agent.ResetAgent(new Vector3(1 * cellSize, agentY, 1 * cellSize));
+
+        if (agent != null)
+        {
+            agent.ResetAgent(new Vector3(1, 0.2f, 1));
+        }
     }
 
     private void ApplyDFS(int x, int z) {
