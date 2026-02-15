@@ -11,39 +11,36 @@ public class TcpClientController : MonoBehaviour
     [Header("Network Settings")]
     public string host = "127.0.0.1";
     public int port = 5000;
-    
+
     [Header("References")]
-    public HeuristicMovement agent;
-    
+    [SerializeField] private CvHeuristicController controller;
+
     public static readonly ConcurrentQueue<byte[]> FrameQueue = new ConcurrentQueue<byte[]>();
-    
+
     private TcpClient _client;
     private NetworkStream _stream;
     private StreamReader _reader;
 
     private Thread _thread;
-    private volatile bool _running = false;
+    private volatile bool _running;
 
-    void Start()
+    private void Start()
     {
-        // 1. Clear queue from potential old data
         while (FrameQueue.TryDequeue(out _)) { }
 
+        if (!controller)
+        {
+            var agentObj = GameObject.FindGameObjectWithTag("Agent");
+            if (agentObj) controller = agentObj.GetComponent<CvHeuristicController>();
+        }
+
         _running = true;
-        _thread = new Thread(NetworkLoop);
-        _thread.IsBackground = true;
+        _thread = new Thread(NetworkLoop) { IsBackground = true };
         _thread.Start();
     }
 
-    private void OnDestroy()
-    {
-        CleanUp();
-    }
-
-    private void OnApplicationQuit()
-    {
-        CleanUp();
-    }
+    private void OnDestroy() => CleanUp();
+    private void OnApplicationQuit() => CleanUp();
 
     private void CleanUp()
     {
@@ -55,12 +52,13 @@ public class TcpClientController : MonoBehaviour
 
         if (_thread != null && _thread.IsAlive)
         {
-            if (!_thread.Join(100))
+            // Bez Abort jeśli się da
+            if (!_thread.Join(200))
             {
-                _thread.Abort();
+                try { _thread.Interrupt(); } catch { }
             }
         }
-        
+
         Debug.Log("[TCP] Connection closed, thread cleaned up.");
     }
 
@@ -68,22 +66,20 @@ public class TcpClientController : MonoBehaviour
     {
         try
         {
-            DebugLog("[UNITY] Attempting to connect to Python...");
+            DebugLog("[TCP] Connecting to Python...");
             _client = new TcpClient();
-            
+
             var result = _client.BeginConnect(host, port, null, null);
             var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(2));
 
             if (!success)
-            {
                 throw new Exception("Connection timeout. Is the Python server running?");
-            }
 
             _client.EndConnect(result);
             _stream = _client.GetStream();
             _reader = new StreamReader(_stream, Encoding.UTF8);
 
-            DebugLog("[UNITY] Connected to server!");
+            DebugLog("[TCP] Connected.");
 
             while (_running)
             {
@@ -93,13 +89,13 @@ public class TcpClientController : MonoBehaviour
                     {
                         byte[] lenBytes = BitConverter.GetBytes(frameBytes.Length);
                         if (BitConverter.IsLittleEndian) Array.Reverse(lenBytes);
-                        
+
                         _stream.Write(lenBytes, 0, 4);
                         _stream.Write(frameBytes, 0, frameBytes.Length);
                     }
                     catch (Exception e)
                     {
-                        DebugLog("[UNITY] Error sending image: " + e.Message);
+                        DebugLog("[TCP] Error sending frame: " + e.Message);
                         break;
                     }
                 }
@@ -107,36 +103,23 @@ public class TcpClientController : MonoBehaviour
                 if (_stream.DataAvailable)
                 {
                     string command = _reader.ReadLine();
-                    if (command != null)
-                    {
-                        HandleCommand(command);
-                    }
-                    else
-                    {
-                        DebugLog("[UNITY] Server closed the connection.");
-                        break;
-                    }
+                    if (command != null) HandleCommand(command);
+                    else { DebugLog("[TCP] Server closed connection."); break; }
                 }
 
                 Thread.Sleep(5);
             }
         }
-        catch (ThreadAbortException) 
-        { 
-            // Ignore error when closing the game
-        }
+        catch (ThreadAbortException) { }
         catch (Exception e)
         {
-            if (_running) 
-            {
-                DebugLog("[UNITY] Network error: " + e.Message);
-            }
+            if (_running) DebugLog("[TCP] Network error: " + e.Message);
         }
         finally
         {
-            _reader?.Dispose();
-            _stream?.Dispose();
-            _client?.Close();
+            try { _reader?.Dispose(); } catch { }
+            try { _stream?.Dispose(); } catch { }
+            try { _client?.Close(); } catch { }
         }
     }
 
@@ -144,38 +127,39 @@ public class TcpClientController : MonoBehaviour
     {
         string[] parts = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length == 0) return;
-        
+
         string action = parts[0].ToUpperInvariant();
 
         if (action == "ROTATE" && parts.Length >= 2 && float.TryParse(parts[1], out float deg))
         {
             UnityMainThreadDispatcher.Enqueue(() =>
             {
-                if (agent != null && agent.isActiveAndEnabled)
-                    agent.RotateDegrees(deg);
+                if (controller != null && controller.isActiveAndEnabled)
+                    controller.RotateDegrees(deg);
             });
         }
         else if (action == "MOVE" && parts.Length >= 2 && float.TryParse(parts[1], out float dist))
         {
             UnityMainThreadDispatcher.Enqueue(() =>
             {
-                if (agent != null && agent.isActiveAndEnabled)
-                    agent.MoveForward(dist);
+                if (controller != null && controller.isActiveAndEnabled)
+                    controller.MoveForward(dist);
             });
         }
         else if (action == "RESET")
         {
-            UnityMainThreadDispatcher.Enqueue(() => {
+            UnityMainThreadDispatcher.Enqueue(() =>
+            {
                 if (MazeManager.Instance != null)
                     MazeManager.Instance.GenerateNewLevel();
             });
         }
         else
         {
-            DebugLog("[UNITY] Unknown command: " + command);
+            DebugLog("[TCP] Unknown command: " + command);
         }
     }
-    
+
     private void DebugLog(string msg)
     {
         UnityMainThreadDispatcher.Enqueue(() => Debug.Log(msg));

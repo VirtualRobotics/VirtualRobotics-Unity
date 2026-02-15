@@ -75,7 +75,7 @@ Camera:
     m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 989bb38da13114743baafd7ec414da11, type: 2}
-  m_TargetDisplay: 0
+  m_TargetDisplay: 2
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
@@ -110,13 +110,15 @@ GameObject:
   - component: {fileID: 615747820540238002}
   - component: {fileID: 3695776826603619617}
   - component: {fileID: 148834299701796089}
-  - component: {fileID: 3421615908692795401}
+  - component: {fileID: 9157212345745256243}
   - component: {fileID: 6863863696481907183}
   - component: {fileID: 2927331790057922610}
   - component: {fileID: 843721641784121164}
   - component: {fileID: 4347287621256626503}
   - component: {fileID: 2802530160446768562}
   - component: {fileID: 300151114386853474}
+  - component: {fileID: 3426210212771747973}
+  - component: {fileID: -3863022204662875944}
   m_Layer: 0
   m_Name: Agent
   m_TagString: Agent
@@ -147,7 +149,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5008710393753235848}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &148834299701796089
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -196,14 +198,14 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &3421615908692795401
-CapsuleCollider:
+--- !u!135 &9157212345745256243
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5008710393753235848}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ffb79f9fb487bb742b95934c6cfa7ab9, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -214,10 +216,8 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &6863863696481907183
 Rigidbody:
@@ -228,8 +228,8 @@ Rigidbody:
   m_GameObject: {fileID: 5008710393753235848}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_LinearDamping: 2
+  m_AngularDamping: 5
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -241,11 +241,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &2927331790057922610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,8 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48e7a447db62ff1428fbaad0092b0793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AgentController
-  moveSpeed: 2
-  rotateSpeed: 90
+  motor: {fileID: 0}
 --- !u!114 &843721641784121164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,8 +308,6 @@ MonoBehaviour:
   MaxStep: 2000
   generateNewMazeOnReset: 1
   maxTimePerLevel: 60
-  moveSpeed: 2
-  turnSpeed: 120
 --- !u!114 &2802530160446768562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,6 +341,38 @@ MonoBehaviour:
   m_Height: 64
   m_Grayscale: 1
   m_ObservationType: 0
-  m_RuntimeCameraEnable: 0
+  m_RuntimeCameraEnable: 1
   m_ObservationStacks: 1
   m_Compression: 0
+--- !u!114 &3426210212771747973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5008710393753235848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2358bf4374fa401db5671682f3a78aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AgentMotor
+  moveSpeed: 2
+  turnSpeed: 120
+  noReverse: 1
+  killPhysicsYawSpin: 1
+  stopLinearThreshold: 0.03
+  stopAngularThreshold: 0.05
+--- !u!114 &-3863022204662875944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5008710393753235848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e1faddd8ca242fa9d5eee71d16d05e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ManualInputController
+  throttleScale: 1
+  steerScale: 1

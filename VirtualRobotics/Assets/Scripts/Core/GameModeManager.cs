@@ -3,64 +3,183 @@ using Unity.MLAgents;
 
 public class GameModeManager : MonoBehaviour
 {
-    [Header("References")]
-    public CameraStreamer cameraStreamer;
-    
-    public GameObject robot;
-    public HeuristicMovement heuristicScript;
-    public RLAgentController rlScript;
-    public TcpClientController tcpController;
+    [Header("Optional References")]
+    [SerializeField] private CameraStreamer cameraStreamer;
 
-    void Start()
+    [Header("Runtime-resolved")]
+    [SerializeField] private GameObject robot;
+
+    // Controllers on the robot:
+    [SerializeField] private MonoBehaviour heuristicController;  // CvHeuristicController OR HeuristicMovement (fallback)
+    [SerializeField] private RLAgentController rlController;
+    [SerializeField] private ManualInputController manualController;
+    [SerializeField] private DecisionRequester decisionRequester;
+
+    // External controller (usually in scene):
+    [SerializeField] private TcpClientController tcpController;
+
+    private void Start()
     {
         SetupGameMode();
     }
 
-    void SetupGameMode()
+    public void SetupGameMode()
     {
-        var mode = GameSettings.CurrentMode;
+        ResolveReferences();
 
-        if (cameraStreamer != null) cameraStreamer.enabled = true;
-        var decider = robot != null ? robot.GetComponent<DecisionRequester>() : null;
+        if (cameraStreamer != null)
+            cameraStreamer.enabled = true;
 
-        if (mode == GameSettings.GameMode.HeuristicCV)
+        switch (GameSettings.CurrentMode)
         {
-            // --- HEURISTIC MODE ---
-            if (cameraStreamer) cameraStreamer.enableStreaming = true; 
-            
-            if(heuristicScript) heuristicScript.enabled = true;
-            if(tcpController) tcpController.enabled = true;
+            case GameSettings.GameMode.HeuristicCV:
+                ApplyHeuristicCvMode();
+                break;
 
-            if (rlScript) rlScript.enabled = false;
-            if (decider) decider.enabled = false;
+            case GameSettings.GameMode.ReinforcementLearning:
+                ApplyInferenceRlMode();
+                break;
+
+            case GameSettings.GameMode.Training:
+                ApplyTrainingMode();
+                break;
+
+            case GameSettings.GameMode.Manual:
+                ApplyManualMode();
+                break;
+
+            default:
+                Debug.LogWarning("[GameModeManager] Unknown mode: " + GameSettings.CurrentMode);
+                ApplySafeDefaults();
+                break;
         }
-        else if (mode == GameSettings.GameMode.ReinforcementLearning)
-        {
-            // --- RL MODE ---
-            if (cameraStreamer) cameraStreamer.enableStreaming = false;
 
-            if(rlScript) rlScript.enabled = true;
-            if (decider) decider.enabled = true;
-
-            if(heuristicScript) heuristicScript.enabled = false;
-            if(tcpController) tcpController.enabled = false;
-        }
-        else if (mode == GameSettings.GameMode.Training)
-        {
-            // --- TRAINING MODE ---
-
-            if (cameraStreamer) cameraStreamer.enabled = false;
-
-            if (rlScript) rlScript.enabled = true;
-            if (decider) decider.enabled = true;
-
-            if (heuristicScript) heuristicScript.enabled = false;
-            if (tcpController) tcpController.enabled = false;
-        }
+        Debug.Log($"[GameModeManager] Mode applied: {GameSettings.CurrentMode}. Robot={(robot ? robot.name : "null")}");
     }
-    
+
     public void ForceSetup()
     {
         SetupGameMode();
+    }
+
+    // =========================
+    // Mode application
+    // =========================
+
+    private void ApplyHeuristicCvMode()
+    {
+        if (cameraStreamer != null) cameraStreamer.enableStreaming = true;
+
+        SetEnabled(manualController, false);
+
+        SetEnabled(heuristicController, true);
+        SetEnabled(tcpController, true);
+
+        SetEnabled(rlController, false);
+        SetEnabled(decisionRequester, false);
+    }
+
+    private void ApplyInferenceRlMode()
+    {
+        if (cameraStreamer != null) cameraStreamer.enableStreaming = false;
+
+        SetEnabled(manualController, false);
+
+        SetEnabled(rlController, true);
+        SetEnabled(decisionRequester, true);
+
+        SetEnabled(heuristicController, false);
+        SetEnabled(tcpController, false);
+    }
+
+    private void ApplyTrainingMode()
+    {
+        if (cameraStreamer != null) cameraStreamer.enabled = false;
+
+        SetEnabled(manualController, false);
+
+        SetEnabled(rlController, true);
+        SetEnabled(decisionRequester, true);
+
+        SetEnabled(heuristicController, false);
+        SetEnabled(tcpController, false);
+    }
+
+    private void ApplyManualMode()
+    {
+        // Manual: streaming off (chyba że chcesz podgląd), TCP off, RL off
+        if (cameraStreamer != null) cameraStreamer.enableStreaming = false;
+
+        SetEnabled(heuristicController, false);
+        SetEnabled(tcpController, false);
+
+        SetEnabled(rlController, false);
+        SetEnabled(decisionRequester, false);
+
+        SetEnabled(manualController, true);
+    }
+
+    private void ApplySafeDefaults()
+    {
+        if (cameraStreamer != null) cameraStreamer.enableStreaming = false;
+
+        SetEnabled(manualController, false);
+        SetEnabled(heuristicController, false);
+        SetEnabled(tcpController, false);
+        SetEnabled(rlController, false);
+        SetEnabled(decisionRequester, false);
+    }
+
+    // =========================
+    // Reference resolving
+    // =========================
+
+    private void ResolveReferences()
+    {
+        if (robot == null)
+            robot = GameObject.FindGameObjectWithTag("Agent");
+
+        if (robot != null)
+        {
+            if (heuristicController == null)
+            {
+                var cv = robot.GetComponent("CvHeuristicController");
+                if (cv != null) heuristicController = (MonoBehaviour)cv;
+
+                if (heuristicController == null)
+                {
+                    var old = robot.GetComponent("HeuristicMovement");
+                    if (old != null) heuristicController = (MonoBehaviour)old;
+                }
+            }
+
+            if (rlController == null)
+                rlController = robot.GetComponent<RLAgentController>();
+
+            if (manualController == null)
+                manualController = robot.GetComponent<ManualInputController>();
+
+            if (decisionRequester == null)
+                decisionRequester = robot.GetComponent<DecisionRequester>();
+        }
+        else
+        {
+            heuristicController = null;
+            rlController = null;
+            manualController = null;
+            decisionRequester = null;
+        }
+
+        if (tcpController == null)
+            tcpController = FindObjectOfType<TcpClientController>(true);
+
+        if (cameraStreamer == null)
+            cameraStreamer = FindObjectOfType<CameraStreamer>(true);
+    }
+
+    private void SetEnabled(Object component, bool enabled)
+    {
+        if (component == null) return;
+        if (component is Behaviour b) b.enabled = enabled;
     }
 }

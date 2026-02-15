@@ -47,6 +47,11 @@ public class MainMenuController : MonoBehaviour
         OpenConfig(GameSettings.GameMode.Training);
     }
     
+    public void SelectManualMode()
+    {
+        OpenConfig(GameSettings.GameMode.Manual);
+    }
+    
     private void OpenConfig(GameSettings.GameMode mode)
     {
         GameSettings.CurrentMode = mode;

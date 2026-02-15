@@ -3,199 +3,298 @@ using System.Collections.Generic;
 
 public class MazeManager : MonoBehaviour
 {
-    public static MazeManager Instance;
+    public static MazeManager Instance { get; private set; }
 
     [Header("Maze Settings")]
-    public int width = 11;
-    public int height = 11;
-    public float cellSize = 1f;
-    
-    [Header("Agents Prefabs")]
-    public GameObject inferenceAgentPrefab;
-    public GameObject trainingAgentPrefab;
+    [SerializeField] private int width = 11;
+    [SerializeField] private int height = 11;
+    [SerializeField] private float cellSize = 1f;
 
-    [Header("Prefabs and References")]
-    public GameObject wallPrefab;
-    public GameObject floorPrefab;
-    public GameObject goalPrefab;
-    
-    [HideInInspector] 
-    public GameObject currentAgentObject; 
-    [HideInInspector] 
-    public HeuristicMovement agent;
+    [Header("Agents Prefabs")]
+    [SerializeField] private GameObject inferenceAgentPrefab;
+    [SerializeField] private GameObject trainingAgentPrefab;
+
+    [Header("Prefabs")]
+    [SerializeField] private GameObject wallPrefab;
+    [SerializeField] private GameObject floorPrefab;
+    [SerializeField] private GameObject goalPrefab;
+
+    [Header("Spawn")]
+    [SerializeField] private Vector2Int startCell = new Vector2Int(1, 1);
+    [SerializeField] private float agentSpawnY = 0.2f;
+    [SerializeField] private float goalSpawnY = 0.4f;
+
+    [Header("Generation Options")]
+    [SerializeField] private bool generateEmptyMaze = false;
+
+    public int[,] MazeGrid => _maze; // jeśli kiedyś będziesz chciał BFS/debug
 
     private int[,] _maze;
+    private Transform _goalTf;
 
-    void Awake() => Instance = this;
+    private GameObject _currentAgent;
+    private Rigidbody _currentAgentRb;
 
-    void Start()
+    private void Awake()
     {
-        SpawnAgentBasedOnMode();
-        ReloadAndGenerate();
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
     }
-    
+
+    private void Start()
+    {
+        ApplySettingsFromGameSettings();
+        SpawnAgentForCurrentMode();
+        GenerateNewLevel();
+    }
+
+    // ============================
+    // Public API
+    // ============================
     public void ReloadAndGenerate()
+    {
+        ApplySettingsFromGameSettings();
+        GenerateNewLevel();
+    }
+
+    public void GenerateNewLevel()
+    {
+        CleanupWorld();
+        BuildGrid();
+        CarveOrEmptyMaze();
+        BuildWorldFromGrid();
+        PlaceGoal();
+        ResetAgentPose();
+    }
+
+    public void ResetAgentPositionOnly()
+    {
+        ResetAgentPose();
+    }
+
+    // ============================
+    // Orchestration helpers
+    // ============================
+    private void ApplySettingsFromGameSettings()
     {
         width = GameSettings.MazeWidth;
         height = GameSettings.MazeHeight;
+        generateEmptyMaze = GameSettings.GenerateEmptyMaze;
 
+        // enforce odd sizes (DFS expects walls between cells)
         if (width % 2 == 0) width++;
         if (height % 2 == 0) height++;
 
-        GenerateNewLevel();
+        // safety
+        width = Mathf.Max(width, 5);
+        height = Mathf.Max(height, 5);
     }
-    
-    void SpawnAgentBasedOnMode()
+
+    private void SpawnAgentForCurrentMode()
     {
-        var existingAgent = GameObject.FindGameObjectWithTag("Agent");
-        if (existingAgent != null) Destroy(existingAgent);
+        DestroyExistingAgent();
 
-        GameObject prefabToSpawn;
+        var prefab = SelectAgentPrefab();
+        if (prefab == null)
+        {
+            Debug.LogError("[MazeManager] Agent prefab is null.");
+            return;
+        }
 
+        _currentAgent = Instantiate(prefab);
+        _currentAgent.tag = "Agent"; // upewnij się, że tag jest ustawiony
+
+        _currentAgentRb = _currentAgent.GetComponent<Rigidbody>();
+        if (_currentAgentRb == null)
+        {
+            Debug.LogWarning("[MazeManager] Spawned agent has no Rigidbody.");
+        }
+
+        // NOTE: Nie wołamy tu GameModeManager.ForceSetup().
+        // To GameModeManager powinien sam ogarnąć w Start() na podstawie GameSettings.
+    }
+
+    private GameObject SelectAgentPrefab()
+    {
         if (GameSettings.CurrentMode == GameSettings.GameMode.Training)
+            return trainingAgentPrefab;
+
+        return inferenceAgentPrefab;
+    }
+
+    private void DestroyExistingAgent()
+    {
+        var existing = GameObject.FindGameObjectWithTag("Agent");
+        if (existing != null) Destroy(existing);
+        _currentAgent = null;
+        _currentAgentRb = null;
+    }
+
+    private void CleanupWorld()
+    {
+        // usuń wszystko z MazeManager (oprócz agenta, jeśli jest dzieckiem - ale tu agent nie jest childem)
+        for (int i = transform.childCount - 1; i >= 0; i--)
         {
-            prefabToSpawn = trainingAgentPrefab;
-            Debug.Log("[MazeManager] Training Agent");
-        }
-        else
-        {
-            prefabToSpawn = inferenceAgentPrefab;
-            Debug.Log("[MazeManager] Standard Agent");
+            Destroy(transform.GetChild(i).gameObject);
         }
 
-        if (prefabToSpawn != null)
-        {
-            currentAgentObject = Instantiate(prefabToSpawn, new Vector3(1, 0, 1), Quaternion.identity);
-            
-            agent = currentAgentObject.GetComponent<HeuristicMovement>();
-            
-            var gameModeMgr = FindObjectOfType<GameModeManager>();
-            if (gameModeMgr != null)
-            {
-                gameModeMgr.robot = currentAgentObject;
-                gameModeMgr.heuristicScript = currentAgentObject.GetComponent<HeuristicMovement>();
-                gameModeMgr.rlScript = currentAgentObject.GetComponent<RLAgentController>();
-                gameModeMgr.ForceSetup(); 
-            }
-        }
+        _goalTf = null;
     }
-    
-    public void ResetAgentPositionOnly()
-    {
-        if (agent != null)
-        {
-            agent.ResetAgent(new Vector3(1, 0.2f, 1));
-            
-            var rb = agent.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-            }
-        }
-    }
-    
-    public void GenerateNewLevel()
-    {
-        // 1. Clean up old objects
-        foreach (Transform child in transform) {
-            if (child.gameObject.CompareTag("Agent")) continue;
-            Destroy(child.gameObject);
-        }
 
-        // 2. Initialize array
+    private void BuildGrid()
+    {
         _maze = new int[width, height];
-        
-        if (GameSettings.GenerateEmptyMaze)
-        {
-            // Opcja Pusta: Wypełnij zerami (podłoga), ustaw jedynki (ściany) tylko na krawędziach
-            for (int x = 0; x < width; x++)
-            {
-                for (int z = 0; z < height; z++)
-                {
-                    // Jeśli krawędź -> Ściana (1), w przeciwnym razie -> Podłoga (0)
-                    if (x == 0 || z == 0 || x == width - 1 || z == height - 1)
-                        _maze[x, z] = 1;
-                    else
-                        _maze[x, z] = 0;
-                }
-            }
-        }
-        else
-        {
-            for (int x = 0; x < width; x++) {
-                for (int z = 0; z < height; z++) {
-                    _maze[x, z] = 1;
-                }
-            }
+        // default: ściany
+        for (int x = 0; x < width; x++)
+            for (int z = 0; z < height; z++)
+                _maze[x, z] = 1;
+    }
 
-            // 3. DFS Algorithm - carves tunnels (0) in walls (1)
-            ApplyDFS(1, 1);
+    private void CarveOrEmptyMaze()
+    {
+        if (generateEmptyMaze)
+        {
+            FillEmptyWithBorderWalls();
+            EnsureStartCellIsPath();
+            return;
         }
-        
-        // 4. Physical construction
-        for (int x = 0; x < width; x++) {
-            for (int z = 0; z < height; z++) {
-                Vector3 pos = new Vector3(x * cellSize, 0, z * cellSize);
-                
-                GameObject floor = Instantiate(floorPrefab, pos, Quaternion.identity, transform);
+
+        ApplyDFS(startCell.x, startCell.y);
+        EnsureStartCellIsPath();
+    }
+
+    private void FillEmptyWithBorderWalls()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int z = 0; z < height; z++)
+            {
+                bool border = x == 0 || z == 0 || x == width - 1 || z == height - 1;
+                _maze[x, z] = border ? 1 : 0;
+            }
+        }
+    }
+
+    private void EnsureStartCellIsPath()
+    {
+        if (IsInBounds(startCell.x, startCell.y))
+            _maze[startCell.x, startCell.y] = 0;
+    }
+
+    private void BuildWorldFromGrid()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int z = 0; z < height; z++)
+            {
+                Vector3 cellWorld = CellToWorld(x, z, 0f);
+
+                // floor
+                var floor = Instantiate(floorPrefab, cellWorld, Quaternion.identity, transform);
+
+                // UWAGA: nie ruszam Twojej skali (0.1f) bo mówisz, że to celowe.
+                // Ale to jest miejsce, gdzie to powinno być kontrolowane.
                 floor.transform.localScale = new Vector3(cellSize * 0.1f, 1f, cellSize * 0.1f);
 
-                if (_maze[x, z] == 1) {
-                    // WALL (Prefab 1x1x1)
-                    Vector3 wallPos = pos + Vector3.up * (cellSize / 2f);
-                    GameObject wall = Instantiate(wallPrefab, wallPos, Quaternion.identity, transform);
+                // wall
+                if (_maze[x, z] == 1)
+                {
+                    Vector3 wallPos = cellWorld + Vector3.up * (cellSize / 2f);
+                    var wall = Instantiate(wallPrefab, wallPos, Quaternion.identity, transform);
                     wall.transform.localScale = new Vector3(cellSize, cellSize, cellSize);
                 }
             }
         }
+    }
 
-        // 5. Place goal and reset agent
-        PlaceGoal();
-
-        if (agent != null)
+    private void PlaceGoal()
+    {
+        // znajdź pierwszy path od końca
+        for (int x = width - 2; x > 0; x--)
         {
-            agent.ResetAgent(new Vector3(1, 0.2f, 1));
-        }
-    }
-
-    private void ApplyDFS(int x, int z) {
-        _maze[x, z] = 0; // Mark as path
-
-        // List of directions (jump 2 cells to leave a wall in between)
-        List<Vector2Int> neighbors = new List<Vector2Int> {
-            new Vector2Int(x - 2, z), new Vector2Int(x + 2, z), 
-            new Vector2Int(x, z - 2), new Vector2Int(x, z + 2)
-        };
-
-        // Shuffle directions
-        for (int i = 0; i < neighbors.Count; i++) {
-            Vector2Int temp = neighbors[i];
-            int r = Random.Range(i, neighbors.Count);
-            neighbors[i] = neighbors[r];
-            neighbors[r] = temp;
-        }
-
-        foreach (var next in neighbors) {
-            // Check if cell is within bounds and is still a wall
-            if (next.x > 0 && next.x < width - 1 && next.y > 0 && next.y < height - 1 && _maze[next.x, next.y] == 1) {
-                // Remove wall between current cell and the next one
-                _maze[(x + next.x) / 2, (z + next.y) / 2] = 0;
-                ApplyDFS(next.x, next.y);
-            }
-        }
-    }
-
-    private void PlaceGoal() {
-        // Find empty spot starting from the end of the maze
-        for (int x = width - 2; x > 0; x--) {
-            for (int z = height - 2; z > 0; z--) {
-                if (_maze[x, z] == 0) {
-                    Vector3 pos = new Vector3(x * cellSize, 0.4f, z * cellSize);
-                    Instantiate(goalPrefab, pos, Quaternion.identity, transform);
+            for (int z = height - 2; z > 0; z--)
+            {
+                if (_maze[x, z] == 0)
+                {
+                    Vector3 pos = CellToWorld(x, z, goalSpawnY);
+                    _goalTf = Instantiate(goalPrefab, pos, Quaternion.identity, transform).transform;
                     return;
                 }
             }
         }
+
+        Debug.LogWarning("[MazeManager] Could not place goal (no path found).");
     }
+
+    private void ResetAgentPose()
+    {
+        if (_currentAgent == null)
+        {
+            Debug.LogWarning("[MazeManager] No current agent to reset.");
+            return;
+        }
+
+        Vector3 pos = CellToWorld(startCell.x, startCell.y, agentSpawnY);
+
+        if (_currentAgentRb != null)
+        {
+            _currentAgentRb.linearVelocity = Vector3.zero;
+            _currentAgentRb.angularVelocity = Vector3.zero;
+
+            _currentAgentRb.position = pos;
+            _currentAgentRb.rotation = Quaternion.identity; // możesz tu dać losowy yaw
+        }
+        else
+        {
+            _currentAgent.transform.position = pos;
+            _currentAgent.transform.rotation = Quaternion.identity;
+        }
+    }
+
+    // ============================
+    // DFS generation
+    // ============================
+    private void ApplyDFS(int x, int z)
+    {
+        _maze[x, z] = 0;
+
+        List<Vector2Int> neighbors = new List<Vector2Int>
+        {
+            new Vector2Int(x - 2, z), new Vector2Int(x + 2, z),
+            new Vector2Int(x, z - 2), new Vector2Int(x, z + 2)
+        };
+
+        Shuffle(neighbors);
+
+        foreach (var next in neighbors)
+        {
+            if (!IsInBounds(next.x, next.y)) continue;
+            if (_maze[next.x, next.y] != 1) continue;
+
+            _maze[(x + next.x) / 2, (z + next.y) / 2] = 0;
+            ApplyDFS(next.x, next.y);
+        }
+    }
+
+    private void Shuffle(List<Vector2Int> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            int r = Random.Range(i, list.Count);
+            (list[i], list[r]) = (list[r], list[i]);
+        }
+    }
+
+    private bool IsInBounds(int x, int z)
+        => x > 0 && x < width - 1 && z > 0 && z < height - 1;
+
+    // ============================
+    // Grid/world helpers
+    // ============================
+    public Vector3 CellToWorld(int x, int z, float y)
+        => new Vector3(x * cellSize, y, z * cellSize);
 }
