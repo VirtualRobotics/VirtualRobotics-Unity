@@ -21,6 +21,7 @@ public class GameModeManager : MonoBehaviour
         var mode = GameSettings.CurrentMode;
 
         if (cameraStreamer != null) cameraStreamer.enabled = true;
+        var decider = robot != null ? robot.GetComponent<DecisionRequester>() : null;
 
         if (mode == GameSettings.GameMode.HeuristicCV)
         {
@@ -29,9 +30,8 @@ public class GameModeManager : MonoBehaviour
             
             if(heuristicScript) heuristicScript.enabled = true;
             if(tcpController) tcpController.enabled = true;
-            if(rlScript) rlScript.enabled = false;
-            
-            var decider = robot.GetComponent<DecisionRequester>();
+
+            if (rlScript) rlScript.enabled = false;
             if (decider) decider.enabled = false;
         }
         else if (mode == GameSettings.GameMode.ReinforcementLearning)
@@ -40,11 +40,27 @@ public class GameModeManager : MonoBehaviour
             if (cameraStreamer) cameraStreamer.enableStreaming = false;
 
             if(rlScript) rlScript.enabled = true;
-            var decider = robot.GetComponent<DecisionRequester>();
             if (decider) decider.enabled = true;
 
             if(heuristicScript) heuristicScript.enabled = false;
             if(tcpController) tcpController.enabled = false;
         }
+        else if (mode == GameSettings.GameMode.Training)
+        {
+            // --- TRAINING MODE ---
+
+            if (cameraStreamer) cameraStreamer.enabled = false;
+
+            if (rlScript) rlScript.enabled = true;
+            if (decider) decider.enabled = true;
+
+            if (heuristicScript) heuristicScript.enabled = false;
+            if (tcpController) tcpController.enabled = false;
+        }
+    }
+    
+    public void ForceSetup()
+    {
+        SetupGameMode();
     }
 }
