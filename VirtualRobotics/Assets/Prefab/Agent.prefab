@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2712049848161444324}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 0.5, z: -0.5}
+  m_LocalPosition: {x: 0, y: 0.5, z: -0.18}
   m_LocalScale: {x: 1, y: 1.105044, z: 1.6805067}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40,7 +40,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2712049848161444324}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -66,7 +66,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 1000
-  field of view: 90
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -75,7 +75,7 @@ Camera:
     m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 989bb38da13114743baafd7ec414da11, type: 2}
-  m_TargetDisplay: 2
+  m_TargetDisplay: 4
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
@@ -228,8 +228,8 @@ Rigidbody:
   m_GameObject: {fileID: 5008710393753235848}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 2
-  m_AngularDamping: 5
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
