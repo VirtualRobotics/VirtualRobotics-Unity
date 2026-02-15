@@ -23,11 +23,17 @@ public class MazeManager : MonoBehaviour
     [SerializeField] private Vector2Int startCell = new Vector2Int(1, 1);
     [SerializeField] private float agentSpawnY = 0.2f;
     [SerializeField] private float goalSpawnY = 0.4f;
+    
+    [Header("Spawn Rotation")]
+    [SerializeField] private bool randomizeSpawnYaw = true;
+
+    [Tooltip("Random yaw range in degrees. 180 = any direction.")]
+    [SerializeField] private float spawnYawRange = 180f;
 
     [Header("Generation Options")]
     [SerializeField] private bool generateEmptyMaze = false;
 
-    public int[,] MazeGrid => _maze; // jeśli kiedyś będziesz chciał BFS/debug
+    public int[,] MazeGrid => _maze;
 
     private int[,] _maze;
     private Transform _goalTf;
@@ -195,9 +201,7 @@ public class MazeManager : MonoBehaviour
 
                 // floor
                 var floor = Instantiate(floorPrefab, cellWorld, Quaternion.identity, transform);
-
-                // UWAGA: nie ruszam Twojej skali (0.1f) bo mówisz, że to celowe.
-                // Ale to jest miejsce, gdzie to powinno być kontrolowane.
+                
                 floor.transform.localScale = new Vector3(cellSize * 0.1f, 1f, cellSize * 0.1f);
 
                 // wall
@@ -240,18 +244,24 @@ public class MazeManager : MonoBehaviour
 
         Vector3 pos = CellToWorld(startCell.x, startCell.y, agentSpawnY);
 
+        float yaw = 0f;
+        if (randomizeSpawnYaw)
+            yaw = Random.Range(-spawnYawRange, spawnYawRange);
+
+        Quaternion rot = Quaternion.Euler(0f, yaw, 0f);
+
         if (_currentAgentRb != null)
         {
             _currentAgentRb.linearVelocity = Vector3.zero;
             _currentAgentRb.angularVelocity = Vector3.zero;
 
             _currentAgentRb.position = pos;
-            _currentAgentRb.rotation = Quaternion.identity; // możesz tu dać losowy yaw
+            _currentAgentRb.rotation = rot;
         }
         else
         {
             _currentAgent.transform.position = pos;
-            _currentAgent.transform.rotation = Quaternion.identity;
+            _currentAgent.transform.rotation = rot;
         }
     }
 

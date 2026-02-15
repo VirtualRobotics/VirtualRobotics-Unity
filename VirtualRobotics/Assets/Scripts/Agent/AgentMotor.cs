@@ -8,18 +8,15 @@ public class AgentMotor : MonoBehaviour
     [SerializeField] private float turnSpeed = 120f;
     [SerializeField] private bool noReverse = true;
 
-    [Header("Stability (Idiot-proof)")]
+    [Header("Stability")]
     [Tooltip("Kills yaw spin coming from collisions/physics solver. Recommended ON for predictable env.")]
     [SerializeField] private bool killPhysicsYawSpin = true;
 
-    [Tooltip("If velocity is smaller than this, snap it to zero to avoid micro-drift.")]
-    [SerializeField] private float stopLinearThreshold = 0.03f;
-
-    [Tooltip("If angular velocity is smaller than this, snap it to zero to avoid micro-rotation.")]
-    [SerializeField] private float stopAngularThreshold = 0.05f;
-
     private Rigidbody _rb;
 
+    // Remember last input so FixedUpdate can decide whether to kill yaw-spin.
+    private float _lastSteer;
+    
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();

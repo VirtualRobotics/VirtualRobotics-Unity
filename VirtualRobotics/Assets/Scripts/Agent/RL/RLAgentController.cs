@@ -44,13 +44,6 @@ public class RLAgentController : Agent
         _motor.Apply(throttle, steer);
     }
 
-    public override void Heuristic(in ActionBuffers actionsOut)
-    {
-        var a = actionsOut.ContinuousActions;
-        a[0] = Input.GetAxisRaw("Vertical");
-        a[1] = Input.GetAxisRaw("Horizontal");
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (!enabled) return;
