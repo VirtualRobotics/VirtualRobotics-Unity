@@ -12,7 +12,6 @@ public class GameModeManager : MonoBehaviour
     // Controllers on the robot:
     [SerializeField] private MonoBehaviour heuristicController;  // CvHeuristicController OR HeuristicMovement (fallback)
     [SerializeField] private RLAgentController rlController;
-    [SerializeField] private ManualInputController manualController;
     [SerializeField] private DecisionRequester decisionRequester;
 
     // External controller (usually in scene):
@@ -44,10 +43,6 @@ public class GameModeManager : MonoBehaviour
                 ApplyTrainingMode();
                 break;
 
-            case GameSettings.GameMode.Manual:
-                ApplyManualMode();
-                break;
-
             default:
                 Debug.LogWarning("[GameModeManager] Unknown mode: " + GameSettings.CurrentMode);
                 ApplySafeDefaults();
@@ -70,8 +65,6 @@ public class GameModeManager : MonoBehaviour
     {
         if (cameraStreamer != null) cameraStreamer.enableStreaming = true;
 
-        SetEnabled(manualController, false);
-
         SetEnabled(heuristicController, true);
         SetEnabled(tcpController, true);
 
@@ -82,8 +75,6 @@ public class GameModeManager : MonoBehaviour
     private void ApplyInferenceRlMode()
     {
         if (cameraStreamer != null) cameraStreamer.enableStreaming = false;
-
-        SetEnabled(manualController, false);
 
         SetEnabled(rlController, true);
         SetEnabled(decisionRequester, true);
@@ -96,8 +87,6 @@ public class GameModeManager : MonoBehaviour
     {
         if (cameraStreamer != null) cameraStreamer.enabled = false;
 
-        SetEnabled(manualController, false);
-
         SetEnabled(rlController, true);
         SetEnabled(decisionRequester, true);
 
@@ -105,25 +94,10 @@ public class GameModeManager : MonoBehaviour
         SetEnabled(tcpController, false);
     }
 
-    private void ApplyManualMode()
-    {
-        // Manual: streaming off (chyba że chcesz podgląd), TCP off, RL off
-        if (cameraStreamer != null) cameraStreamer.enableStreaming = false;
-
-        SetEnabled(heuristicController, false);
-        SetEnabled(tcpController, false);
-
-        SetEnabled(rlController, false);
-        SetEnabled(decisionRequester, false);
-
-        SetEnabled(manualController, true);
-    }
-
     private void ApplySafeDefaults()
     {
         if (cameraStreamer != null) cameraStreamer.enableStreaming = false;
 
-        SetEnabled(manualController, false);
         SetEnabled(heuristicController, false);
         SetEnabled(tcpController, false);
         SetEnabled(rlController, false);
@@ -145,19 +119,10 @@ public class GameModeManager : MonoBehaviour
             {
                 var cv = robot.GetComponent("CvHeuristicController");
                 if (cv != null) heuristicController = (MonoBehaviour)cv;
-
-                if (heuristicController == null)
-                {
-                    var old = robot.GetComponent("HeuristicMovement");
-                    if (old != null) heuristicController = (MonoBehaviour)old;
-                }
             }
 
             if (rlController == null)
                 rlController = robot.GetComponent<RLAgentController>();
-
-            if (manualController == null)
-                manualController = robot.GetComponent<ManualInputController>();
 
             if (decisionRequester == null)
                 decisionRequester = robot.GetComponent<DecisionRequester>();
@@ -166,7 +131,6 @@ public class GameModeManager : MonoBehaviour
         {
             heuristicController = null;
             rlController = null;
-            manualController = null;
             decisionRequester = null;
         }
 

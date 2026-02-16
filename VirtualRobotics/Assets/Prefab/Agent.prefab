@@ -118,7 +118,6 @@ GameObject:
   - component: {fileID: 2802530160446768562}
   - component: {fileID: 300151114386853474}
   - component: {fileID: 3426210212771747973}
-  - component: {fileID: -3863022204662875944}
   m_Layer: 0
   m_Name: Agent
   m_TagString: Agent
@@ -253,7 +252,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5008710393753235848}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48e7a447db62ff1428fbaad0092b0793, type: 3}
   m_Name: 
@@ -297,7 +296,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5008710393753235848}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d0dd077a3ef1444c9df4fda22849ddf, type: 3}
   m_Name: 
@@ -307,7 +306,13 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
   generateNewMazeOnReset: 1
-  maxTimePerLevel: 60
+  goalReward: 1
+  stepPenalty: -0.001
+  wallHitPenalty: -0.02
+  wallPenaltyCooldown: 0.15
+  enableKeyboardHeuristic: 1
+  throttleScale: 1
+  steerScale: 1
 --- !u!114 &2802530160446768562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,7 +325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.DecisionRequester
-  DecisionPeriod: 5
+  DecisionPeriod: 3
   DecisionStep: 0
   TakeActionsBetweenDecisions: 1
 --- !u!114 &300151114386853474
@@ -360,19 +365,3 @@ MonoBehaviour:
   turnSpeed: 120
   noReverse: 1
   killPhysicsYawSpin: 1
-  stopLinearThreshold: 0.03
-  stopAngularThreshold: 0.05
---- !u!114 &-3863022204662875944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5008710393753235848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e1faddd8ca242fa9d5eee71d16d05e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ManualInputController
-  throttleScale: 1
-  steerScale: 1

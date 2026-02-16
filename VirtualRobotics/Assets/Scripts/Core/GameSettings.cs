@@ -4,8 +4,7 @@ public static class GameSettings
     { 
         HeuristicCV,
         ReinforcementLearning,
-        Training,
-        Manual
+        Training
     }
 
     public static GameMode CurrentMode = GameMode.HeuristicCV;

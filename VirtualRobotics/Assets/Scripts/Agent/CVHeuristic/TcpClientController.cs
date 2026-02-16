@@ -52,7 +52,6 @@ public class TcpClientController : MonoBehaviour
 
         if (_thread != null && _thread.IsAlive)
         {
-            // Bez Abort jeśli się da
             if (!_thread.Join(200))
             {
                 try { _thread.Interrupt(); } catch { }
