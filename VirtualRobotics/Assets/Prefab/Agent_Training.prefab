@@ -8,13 +8,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3863022204662875944, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 615747820540238002, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 615747820540238002, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 615747820540238002, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -53,14 +57,51 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 843721641784121164, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 843721641784121164, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
       propertyPath: m_BehaviorType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2802530160446768562, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2802530160446768562, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: DecisionPeriod
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2927331790057922610, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4347287621256626503, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: MaxStep
+      value: 5000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4347287621256626503, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4347287621256626503, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: stepPenalty
+      value: -0.0005
+      objectReference: {fileID: 0}
+    - target: {fileID: 4347287621256626503, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: wallHitPenalty
+      value: -0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4347287621256626503, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: enableKeyboardHeuristic
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5008710393753235848, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
       propertyPath: m_Name
       value: Agent_Training
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -3863022204662875944, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

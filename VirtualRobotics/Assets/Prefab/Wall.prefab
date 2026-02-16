@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8181715408887945878}
   m_Layer: 0
   m_Name: Wall
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -97,7 +97,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3528574861658423748}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 38b36fe9430f85a4e84537b50ee56169, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

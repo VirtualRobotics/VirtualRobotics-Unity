@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2712049848161444324}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 0.5, z: -0.5}
+  m_LocalPosition: {x: 0, y: 0.5, z: -0.18}
   m_LocalScale: {x: 1, y: 1.105044, z: 1.6805067}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40,7 +40,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2712049848161444324}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -66,7 +66,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 1000
-  field of view: 90
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -75,7 +75,7 @@ Camera:
     m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 989bb38da13114743baafd7ec414da11, type: 2}
-  m_TargetDisplay: 0
+  m_TargetDisplay: 4
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
@@ -110,13 +110,14 @@ GameObject:
   - component: {fileID: 615747820540238002}
   - component: {fileID: 3695776826603619617}
   - component: {fileID: 148834299701796089}
-  - component: {fileID: 3421615908692795401}
+  - component: {fileID: 9157212345745256243}
   - component: {fileID: 6863863696481907183}
   - component: {fileID: 2927331790057922610}
   - component: {fileID: 843721641784121164}
   - component: {fileID: 4347287621256626503}
   - component: {fileID: 2802530160446768562}
   - component: {fileID: 300151114386853474}
+  - component: {fileID: 3426210212771747973}
   m_Layer: 0
   m_Name: Agent
   m_TagString: Agent
@@ -147,7 +148,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5008710393753235848}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &148834299701796089
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -196,14 +197,14 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &3421615908692795401
-CapsuleCollider:
+--- !u!135 &9157212345745256243
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5008710393753235848}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ffb79f9fb487bb742b95934c6cfa7ab9, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -214,10 +215,8 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &6863863696481907183
 Rigidbody:
@@ -241,11 +240,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &2927331790057922610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,8 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48e7a447db62ff1428fbaad0092b0793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AgentController
-  moveSpeed: 2
-  rotateSpeed: 90
+  motor: {fileID: 0}
 --- !u!114 &843721641784121164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -308,9 +306,13 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
   generateNewMazeOnReset: 1
-  maxTimePerLevel: 60
-  moveSpeed: 2
-  turnSpeed: 120
+  goalReward: 1
+  stepPenalty: -0.001
+  wallHitPenalty: -0.02
+  wallPenaltyCooldown: 0.15
+  enableKeyboardHeuristic: 1
+  throttleScale: 1
+  steerScale: 1
 --- !u!114 &2802530160446768562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,12 +320,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5008710393753235848}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.DecisionRequester
-  DecisionPeriod: 5
+  DecisionPeriod: 3
   DecisionStep: 0
   TakeActionsBetweenDecisions: 1
 --- !u!114 &300151114386853474
@@ -344,6 +346,22 @@ MonoBehaviour:
   m_Height: 64
   m_Grayscale: 1
   m_ObservationType: 0
-  m_RuntimeCameraEnable: 0
+  m_RuntimeCameraEnable: 1
   m_ObservationStacks: 1
   m_Compression: 0
+--- !u!114 &3426210212771747973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5008710393753235848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2358bf4374fa401db5671682f3a78aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AgentMotor
+  moveSpeed: 2
+  turnSpeed: 120
+  noReverse: 1
+  killPhysicsYawSpin: 1
