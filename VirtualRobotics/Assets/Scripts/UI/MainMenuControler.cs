@@ -14,6 +14,7 @@ public class MainMenuController : MonoBehaviour
     public TMP_InputField widthInput;
     public TMP_InputField heightInput;
     public Toggle emptyMazeToggle;
+    public Toggle randomizeSpawnsToggle;
     
     void Start()
     {
@@ -56,10 +57,8 @@ public class MainMenuController : MonoBehaviour
             configPanel.SetActive(true);
             ResetInputs();
             
-            if (emptyMazeToggle != null)
-            {
-                emptyMazeToggle.isOn = GameSettings.GenerateEmptyMaze;
-            }
+            if (emptyMazeToggle) emptyMazeToggle.isOn = GameSettings.GenerateEmptyMaze;
+            if (randomizeSpawnsToggle) randomizeSpawnsToggle.isOn = GameSettings.RandomizeSpawns;
         }
         else
         {
@@ -71,11 +70,9 @@ public class MainMenuController : MonoBehaviour
     {
         SaveSizeFromInputs();
         
-        if (emptyMazeToggle != null)
-        {
-            GameSettings.GenerateEmptyMaze = emptyMazeToggle.isOn;
-            Debug.Log($"Empty maze mode: {GameSettings.GenerateEmptyMaze}");
-        }
+        if (emptyMazeToggle) GameSettings.GenerateEmptyMaze = emptyMazeToggle.isOn;
+
+        if (randomizeSpawnsToggle) GameSettings.RandomizeSpawns = randomizeSpawnsToggle.isOn;
 
         LoadGameScene();
     }

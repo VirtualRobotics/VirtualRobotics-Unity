@@ -7,10 +7,10 @@ public class GameModeManager : MonoBehaviour
     [SerializeField] private CameraStreamer cameraStreamer;
 
     [Header("Runtime-resolved")]
-    [SerializeField] private GameObject robot;
+    [SerializeField] private GameObject agent;
 
     // Controllers on the robot:
-    [SerializeField] private MonoBehaviour heuristicController;  // CvHeuristicController OR HeuristicMovement (fallback)
+    [SerializeField] private CvHeuristicController heuristicController;
     [SerializeField] private RLAgentController rlController;
     [SerializeField] private DecisionRequester decisionRequester;
 
@@ -49,7 +49,7 @@ public class GameModeManager : MonoBehaviour
                 break;
         }
 
-        Debug.Log($"[GameModeManager] Mode applied: {GameSettings.CurrentMode}. Robot={(robot ? robot.name : "null")}");
+        Debug.Log($"[GameModeManager] Mode applied: {GameSettings.CurrentMode}. agent={(agent ? agent.name : "null")}");
     }
 
     public void ForceSetup()
@@ -110,22 +110,21 @@ public class GameModeManager : MonoBehaviour
 
     private void ResolveReferences()
     {
-        if (robot == null)
-            robot = GameObject.FindGameObjectWithTag("Agent");
+        if (agent == null)
+            agent = GameObject.FindGameObjectWithTag("Agent");
 
-        if (robot != null)
+        if (agent != null)
         {
             if (heuristicController == null)
             {
-                var cv = robot.GetComponent("CvHeuristicController");
-                if (cv != null) heuristicController = (MonoBehaviour)cv;
+                heuristicController = agent.GetComponent<CvHeuristicController>();
             }
 
             if (rlController == null)
-                rlController = robot.GetComponent<RLAgentController>();
+                rlController = agent.GetComponent<RLAgentController>();
 
             if (decisionRequester == null)
-                decisionRequester = robot.GetComponent<DecisionRequester>();
+                decisionRequester = agent.GetComponent<DecisionRequester>();
         }
         else
         {

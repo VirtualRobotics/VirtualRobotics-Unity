@@ -14,4 +14,6 @@ public static class GameSettings
     
     public static bool KeepMapLayout = false;
     public static bool GenerateEmptyMaze = false;
+    
+    public static bool RandomizeSpawns = false;
 }

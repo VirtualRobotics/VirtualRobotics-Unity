@@ -1451,9 +1451,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameModeManager
   cameraStreamer: {fileID: 0}
-  robot: {fileID: 0}
-  heuristicScript: {fileID: 0}
-  rlScript: {fileID: 0}
+  agent: {fileID: 5008710393753235848, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+  heuristicController: {fileID: 0}
+  rlController: {fileID: 0}
+  decisionRequester: {fileID: 0}
   tcpController: {fileID: 1569947042}
 --- !u!4 &748373947
 Transform:
@@ -1507,8 +1508,13 @@ MonoBehaviour:
   wallPrefab: {fileID: 3528574861658423748, guid: 60da8017cd147f946a46880e48f4787f, type: 3}
   floorPrefab: {fileID: 1105049782207547450, guid: a4621d83dbae3e44d81875048733728e, type: 3}
   goalPrefab: {fileID: 6475565758416362787, guid: 3f329baf75ec62847a666c6911c4c713, type: 3}
-  currentAgentObject: {fileID: 0}
-  agent: {fileID: 0}
+  defaultStartCell: {x: 1, y: 1}
+  agentSpawnY: 0.2
+  goalSpawnY: 0.4
+  randomizeSpawns: 0
+  randomizeSpawnYaw: 1
+  spawnYawRange: 180
+  generateEmptyMaze: 0
 --- !u!4 &799515538
 Transform:
   m_ObjectHideFlags: 0
@@ -1756,11 +1762,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameUIController
   modeText: {fileID: 208894201}
-  menuSceneName: MenuScene
   widthInput: {fileID: 829593712}
   heightInput: {fileID: 1058134770}
-  rlAgent: {fileID: 0}
   keepMapToggle: {fileID: 292491517}
+  emptyMazeToggle: {fileID: 0}
+  menuSceneName: MenuScene
 --- !u!114 &998481119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2775,7 +2781,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   host: 127.0.0.1
   port: 5000
-  agent: {fileID: 0}
+  controller: {fileID: 0}
 --- !u!4 &1569947043
 Transform:
   m_ObjectHideFlags: 0
