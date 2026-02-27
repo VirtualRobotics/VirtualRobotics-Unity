@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.MLAgents;
+using UnityEngine;
 
 /// <summary>
 /// Siewca (Factory). Jego jedynym zadaniem jest rozstawienie N kopii 
@@ -65,8 +66,9 @@ public class TrainingEnvManager : MonoBehaviour
             // Odpalamy Orkiestratora na sklonowanym środowisku
             TrainingMazeManager envManager = envObj.GetComponent<TrainingMazeManager>();
             
-            // Wstrzykujemy TYLKO agenta. Resztę Orkiestrator pobierze sobie sam!
+             // Inicjalizujemy agenta (tutaj agent pojawia się na scenie)
             envManager.Initialize(agentPrefab);
+            
         }
     }
 }

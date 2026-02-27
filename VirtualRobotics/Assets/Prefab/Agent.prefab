@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1360874572135208022}
   - component: {fileID: 3707355043145278415}
   - component: {fileID: 8532776310939083239}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AgentCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2712049848161444324}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -65,23 +65,23 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.1
-  far clip plane: 1000
+  far clip plane: 15
   field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 64
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 989bb38da13114743baafd7ec414da11, type: 2}
-  m_TargetDisplay: 4
+  m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
+  m_HDR: 0
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!114 &8532776310939083239
@@ -91,7 +91,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2712049848161444324}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8b4fce521dbd7a47b47d5d1d4040eb8, type: 3}
   m_Name: 
@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 2802530160446768562}
   - component: {fileID: 300151114386853474}
   - component: {fileID: 3426210212771747973}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Agent
   m_TagString: Agent
   m_Icon: {fileID: 0}
@@ -282,7 +282,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
-  m_BehaviorType: 1
+  m_BehaviorType: 0
   m_BehaviorName: AgentController
   TeamId: 0
   m_UseChildSensors: 1
@@ -325,7 +325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.DecisionRequester
-  DecisionPeriod: 3
+  DecisionPeriod: 5
   DecisionStep: 0
   TakeActionsBetweenDecisions: 1
 --- !u!114 &300151114386853474
@@ -346,9 +346,9 @@ MonoBehaviour:
   m_Height: 64
   m_Grayscale: 1
   m_ObservationType: 0
-  m_RuntimeCameraEnable: 1
+  m_RuntimeCameraEnable: 0
   m_ObservationStacks: 1
-  m_Compression: 0
+  m_Compression: 1
 --- !u!114 &3426210212771747973
 MonoBehaviour:
   m_ObjectHideFlags: 0
