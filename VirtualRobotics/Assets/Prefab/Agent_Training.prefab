@@ -78,11 +78,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4347287621256626503, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
       propertyPath: MaxStep
-      value: 5000
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4347287621256626503, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4347287621256626503, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: goalReward
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4347287621256626503, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
       propertyPath: stepPenalty
@@ -94,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4347287621256626503, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
       propertyPath: enableKeyboardHeuristic
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5008710393753235848, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
       propertyPath: m_Name
