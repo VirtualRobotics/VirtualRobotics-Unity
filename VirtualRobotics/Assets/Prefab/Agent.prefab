@@ -204,7 +204,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5008710393753235848}
-  m_Material: {fileID: 13400000, guid: ffb79f9fb487bb742b95934c6cfa7ab9, type: 2}
+  m_Material: {fileID: 13400000, guid: c308ca39ab5f1b34a877044add159c1e, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -282,7 +282,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
-  m_BehaviorType: 2
+  m_BehaviorType: 1
   m_BehaviorName: AgentController
   TeamId: 0
   m_UseChildSensors: 1
@@ -305,7 +305,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
-  generateNewMazeOnReset: 1
+  generateEmptyMaze: 1
   goalReward: 1
   stepPenalty: -0.001
   progressRewardScale: 0.01

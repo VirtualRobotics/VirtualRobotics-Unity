@@ -6,6 +6,8 @@
 /// </summary>
 public class TrainingEnvManager : MonoBehaviour
 {
+    public static TrainingEnvManager Instance { get; private set; }
+    
     [Header("Prefabs")]
     [SerializeField] private GameObject envRootPrefab; 
     [SerializeField] private GameObject agentPrefab;   
@@ -15,12 +17,31 @@ public class TrainingEnvManager : MonoBehaviour
     [SerializeField] private int rows = 4; // 4x4 = 16 środowisk
     [SerializeField] private float spacing = 20f; // Bezpieczny odstęp w metrach
 
-    [Header("Maze Dimensions (External)")]
-    [SerializeField] private int mazeWidth = 3;  // Zewnętrzne 3 da wewnątrz korytarz 1
-    [SerializeField] private int mazeHeight = 5; // Zewnętrzne 5 da wewnątrz korytarz 3
+
+    [Header("Global Environment Settings")]
+    public int MazeWidth = 3;  
+    public int MazeHeight = 5; 
+    public bool GenerateEmptyMaze = true;
+    
+    private void Awake()
+    {
+        // Ustawiamy Singletona, zanim ktokolwiek go zawoła
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
 
     private void Start()
     {
+        // Wymuszenie normalnego czasu dla testów (nadpisuje zachowanie ML-Agents)
+        Time.timeScale = 1f; 
+        Time.fixedDeltaTime = 0.02f; // Domyślny timestep fizyki w Unity (50 klatek fizycznych na sekundę)
+        
         SpawnEnvironments();
     }
 
@@ -44,11 +65,8 @@ public class TrainingEnvManager : MonoBehaviour
             // Odpalamy Orkiestratora na sklonowanym środowisku
             TrainingMazeManager envManager = envObj.GetComponent<TrainingMazeManager>();
             
-            // Wstrzykujemy zależności. Agent wylosuje sobie miejsce za pomocą naszej nowej funkcji.
-            envManager.Initialize(mazeWidth, mazeHeight, agentPrefab);
-            
-            // Generujemy labirynt - podajemy true, jeśli chcemy puste "pudło" (np. korytarz 1x3)
-            envManager.RefreshLevel(isEmpty: true); 
+            // Wstrzykujemy TYLKO agenta. Resztę Orkiestrator pobierze sobie sam!
+            envManager.Initialize(agentPrefab);
         }
     }
 }

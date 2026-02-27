@@ -168,8 +168,9 @@ MonoBehaviour:
   columns: 4
   rows: 4
   spacing: 20
-  mazeWidth: 3
-  mazeHeight: 5
+  MazeWidth: 11
+  MazeHeight: 11
+  GenerateEmptyMaze: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

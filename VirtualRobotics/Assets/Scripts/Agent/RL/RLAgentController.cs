@@ -6,8 +6,6 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(AgentMotor))]
 public class RLAgentController : Agent
 {
-    [Header("Episode")]
-    [SerializeField] private bool generateNewMazeOnReset = true;
 
     [Header("Rewards")]
     [SerializeField] private float goalReward = 2.0f;
@@ -26,29 +24,33 @@ public class RLAgentController : Agent
     [SerializeField] private float steerScale = 1f;
 
     private AgentMotor _motor;
+    
+    // ZMIANA 1: Agent ma referencję do swojego lokalnego menadżera (Orkiestratora)
+    private TrainingMazeManager _localManager; 
 
     private float _lastWallPenaltyTime = -999f;
-
     private Transform _goalTf;
     private float _prevDist = 0f;
 
     public override void Initialize()
     {
         _motor = GetComponent<AgentMotor>();
+        
+        // Szukamy TrainingMazeManager tylko w obrębie naszego prefaba EnvRoot
+        _localManager = GetComponentInParent<TrainingMazeManager>();
     }
 
     public override void OnEpisodeBegin()
     {
         _lastWallPenaltyTime = -999f;
 
-        if (MazeManager.Instance != null)
+        // ZMIANA 2: Prosimy LOKALNEGO menadżera o zresetowanie poziomu
+        if (_localManager != null)
         {
-            if (generateNewMazeOnReset) MazeManager.Instance.GenerateNewLevel();
-            else MazeManager.Instance.ResetAgentPositionOnly();
+            _localManager.RefreshLevel();
+            _goalTf = _localManager.CurrentGoal; 
         }
 
-        // reacquire goal after regen/reset
-        _goalTf = FindGoalTransform();
         _prevDist = GetDistToGoal();
     }
 
@@ -68,8 +70,7 @@ public class RLAgentController : Agent
             return;
         }
 
-        float progress = _prevDist - dist; // >0 when closer
-        // optional safety clamp to avoid crazy spikes
+        float progress = _prevDist - dist; 
         progress = Mathf.Clamp(progress, -1f, 1f);
 
         AddReward(progress * progressRewardScale);
@@ -87,10 +88,11 @@ public class RLAgentController : Agent
     {
         if (!enabled) return;
 
-        if (other.CompareTag("Goal"))
+        // Tutaj Tag "Goal" jest w porządku, bo reagujemy tylko na fizyczne dotknięcie
+        if (other.CompareTag("Goal")) 
         {
             AddReward(goalReward);
-            EndEpisode();
+            EndEpisode(); // To wywoła OnEpisodeBegin w następnej klatce
         }
     }
 
@@ -106,7 +108,6 @@ public class RLAgentController : Agent
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
-    //TODO CO DO KURWY, CZY TO KORZYSTA Z AGENTMOTOR?
     {
         var a = actionsOut.ContinuousActions;
 
@@ -137,25 +138,11 @@ public class RLAgentController : Agent
         a[1] = Mathf.Clamp(steer * steerScale, -1f, 1f);
     }
 
-    // ------------------------
-    // Helpers
-    // ------------------------
-
-    private Transform FindGoalTransform()
-    {
-        var g = GameObject.FindGameObjectWithTag("Goal");
-        return g ? g.transform : null;
-    }
-
+    // ZMIANA 3: Uproszczone obliczanie dystansu na podstawie bezpośredniej referencji
     private float GetDistToGoal()
     {
-        if (_goalTf == null)
-        {
-            _goalTf = FindGoalTransform();
-            if (_goalTf == null) return float.PositiveInfinity;
-        }
+        if (_goalTf == null) return float.PositiveInfinity;
 
-        // planar distance (ignore Y)
         Vector3 a = transform.position; a.y = 0f;
         Vector3 b = _goalTf.position;   b.y = 0f;
         return Vector3.Distance(a, b);

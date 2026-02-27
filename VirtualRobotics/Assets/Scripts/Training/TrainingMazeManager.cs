@@ -21,7 +21,14 @@ public class TrainingMazeManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private float cellSize = 1f;
-    [SerializeField] private float agentY = 0.2f; // Offset Y, żeby agent nie przenikał przez podłogę
+
+    [Header("Spawn Settings (Matched with Original)")]
+    [SerializeField] private float goalSpawnY = 0.4f;
+    [SerializeField] private float agentSpawnY = 0.2f;
+    
+    [Header("Randomization Options")]
+    [SerializeField] private bool randomizeSpawnYaw = true;
+    [SerializeField] private float spawnYawRange = 180f;
 
     // Czysty model danych (POCO) - nasza logika biznesowa odcięta od Unity.
     private MazeGenerator _generator;
@@ -33,27 +40,40 @@ public class TrainingMazeManager : MonoBehaviour
     /// <summary>
     /// Metoda "Setup", wywoływana jednorazowo przy tworzeniu środowiska przez głównego Siewcę (TrainingEnvManager).
     /// </summary>
-    public void Initialize(int w, int h, GameObject agentPrefab)
+    public void Initialize(GameObject agentPrefab)
     {
-        // Tworzymy nową instancję logiki matematycznej.
-        _generator = new MazeGenerator(w, h);
-        
         // Klonujemy (Instantiate) prefaba agenta.
         // Drugi argument (transform) przypina agenta jako dziecko TEGO środowiska (EnvRoot).
         // Dzięki temu agent fizycznie należy do swojej "piaskownicy".
         _currentAgent = Instantiate(agentPrefab, transform);
+        
+        // ZMUSZAMY orkiestratora, żeby od razu wygenerował pierwszy poziom
+        RefreshLevel();
     }
 
     /// <summary>
     /// Cykl życia ML-Agents: ta metoda jest wołana na początku każdego nowego epizodu.
     /// Realizuje przepływ (Flow) w sposób imperatywny i czytelny (SRP).
     /// </summary>
-    public void RefreshLevel(bool isEmpty)
+// ZMIANA 2: RefreshLevel nie przyjmuje już argumentów!
+    public void RefreshLevel()
     {
-        Cleanup();                    // 1. Zniszcz stare klocki
-        _generator.Generate(isEmpty); // 2. Oblicz nowy rozkład jazdy (macierz)
-        ConstructVisuals();           // 3. Zbuduj nowy świat z klocków
-        PlaceEntities();              // 4. Rozstaw aktorów (Agent i Cel)
+        Cleanup();
+        
+        // 1. Pytamy Głównego Siewcę o aktualne ustawienia
+        int currentW = TrainingEnvManager.Instance.MazeWidth;
+        int currentH = TrainingEnvManager.Instance.MazeHeight;
+        bool isEmpty = TrainingEnvManager.Instance.GenerateEmptyMaze;
+
+        // (Kiedy wprowadzisz Curriculum Learning ML-Agents, to dokładnie 
+        // W TYM MIEJSCU nadpiszesz te zmienne wartościami z Pythona).
+
+        // 2. Budujemy NA NOWO generator z pobranymi wymiarami
+        _generator = new MazeGenerator(currentW, currentH);
+        _generator.Generate(isEmpty); 
+        
+        ConstructVisuals();           
+        PlaceEntities();              
     }
 
     /// <summary>
@@ -68,19 +88,16 @@ public class TrainingMazeManager : MonoBehaviour
         {
             for (int z = 0; z < grid.GetLength(1); z++)
             {
-                // Przeliczamy abstrakcyjny indeks [x, z] na fizyczne współrzędne w metrach.
-                Vector3 pos = CellToWorld(x, z, 0);
+                Vector3 pos = CellToWorld(x, z, 0); // Przeliczamy abstrakcyjny indeks [x, z] na fizyczne współrzędne w metrach.
+                GameObject floor = Instantiate(floorPrefab, pos, Quaternion.identity, worldRoot); // Zawsze kładziemy podłogę. 
+                floor.transform.localScale = new Vector3(cellSize * 0.1f, 1f, cellSize * 0.1f); // PRZYWRACAMY SKALĘ (Plane 10x10 -> 1x1)
                 
-                // Zawsze kładziemy podłogę. 
-                // Quaternion.identity to po prostu brak rotacji (odpowiednik rotacji 0,0,0).
-                Instantiate(floorPrefab, pos, Quaternion.identity, worldRoot);
-                
-                // Jeśli model danych mówi "tu jest ściana (1)":
-                if (grid[x, z] == 1)
+                if (grid[x, z] == 1) // Jeśli model danych mówi "tu jest ściana (1)":
                 {
-                    // Ściany w Unity mają swój punkt centralny (pivot) zazwyczaj na środku bryły.
-                    // Podnosimy ją o połowę wysokości (cellSize / 2f), żeby nie była w połowie zakopana pod ziemią.
-                    Instantiate(wallPrefab, pos + Vector3.up * (cellSize / 2f), Quaternion.identity, worldRoot);
+                    // Kładziemy ścianę. Podnosimy ją o połowę wysokości, żeby stała na podłodze.
+                    Vector3 wallPos = pos + Vector3.up * (cellSize / 2f);
+                    GameObject wall = Instantiate(wallPrefab, wallPos, Quaternion.identity, worldRoot);
+                    wall.transform.localScale = new Vector3(cellSize, cellSize, cellSize);
                 }
             }
         }
@@ -93,30 +110,45 @@ public class TrainingMazeManager : MonoBehaviour
     {
         // 1. Zbieramy wszystkie koordynaty, które są podłogą (0)
         List<Vector2Int> emptyCells = GetEmptyCells();
-
-        // Zabezpieczenie na wypadek ekstremalnie małego labiryntu
-        if (emptyCells.Count < 2) 
+        
+        if (emptyCells.Count < 2) // Zabezpieczenie na wypadek ekstremalnie małego labiryntu
         {
             Debug.LogError("Labirynt jest za mały, żeby pomieścić agenta i cel!");
             return;
         }
 
-        // 2. Losujemy pozycję dla Agenta (Random.Range dla int działa WYŁĄCZNIE dla górnej granicy)
+        // 2. Losowanie pozycji Agenta
         int agentIndex = UnityEngine.Random.Range(0, emptyCells.Count);
         Vector2Int startPoint = emptyCells[agentIndex];
-        
-        // 3. Usuwamy tę pozycję z listy, żeby Cel na niej nie wylądował
-        emptyCells.RemoveAt(agentIndex);
+        emptyCells.RemoveAt(agentIndex); // Usuwamy tę pozycję z listy, żeby Cel na niej nie wylądował
 
         // 4. Losujemy pozycję dla Celu z POZOSTAŁYCH wolnych miejsc
         int goalIndex = UnityEngine.Random.Range(0, emptyCells.Count);
         Vector2Int goalPoint = emptyCells[goalIndex];
-
-        // 5. Rozstawiamy obiekty na scenie
-        _currentAgent.transform.position = CellToWorld(startPoint.x, startPoint.y, agentY);
         
+        // 4. Obliczanie losowej rotacji (Yaw)
+        float yaw = 0f;
+        if (randomizeSpawnYaw)
+        {
+            yaw = UnityEngine.Random.Range(-spawnYawRange, spawnYawRange);
+        }
+        Quaternion startRotation = Quaternion.Euler(0f, yaw, 0f);
+
+        // 5. Fizyczne ustawienie Agenta
+        _currentAgent.transform.position = CellToWorld(startPoint.x, startPoint.y, agentSpawnY);
+        _currentAgent.transform.rotation = startRotation;
+        
+        // Zatrzymanie sił fizycznych (zgodnie z oryginalnym _currentAgentRb.Sleep())
+        Rigidbody rb = _currentAgent.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero; 
+            rb.angularVelocity = Vector3.zero;
+        }
+        
+        // 6. Fizyczne ustawienie Celu z użyciem oryginalnego goalSpawnY
         if (_currentGoal != null) Destroy(_currentGoal);
-        _currentGoal = Instantiate(goalPrefab, CellToWorld(goalPoint.x, goalPoint.y, 0.4f), Quaternion.identity, worldRoot);
+        _currentGoal = Instantiate(goalPrefab, CellToWorld(goalPoint.x, goalPoint.y, goalSpawnY), Quaternion.identity, worldRoot);
     }
 
     /// <summary>
@@ -164,5 +196,8 @@ public class TrainingMazeManager : MonoBehaviour
         // Bez tego wszystkie 8 labiryntów zbudowałoby się w jednym punkcie (0, 0, 0) nałożone na siebie!
         return transform.position + new Vector3(x * cellSize, y, z * cellSize);
     }
+    
+    // Publiczny dostępnik, żeby Agent wiedział, gdzie jest meta w JEGO środowisku
+    public Transform CurrentGoal => _currentGoal != null ? _currentGoal.transform : null;
 
 }
