@@ -89,8 +89,8 @@ public class TrainingMazeManager : MonoBehaviour
             for (int z = 0; z < grid.GetLength(1); z++)
             {
                 Vector3 pos = CellToWorld(x, z, 0); // Przeliczamy abstrakcyjny indeks [x, z] na fizyczne współrzędne w metrach.
-                GameObject floor = Instantiate(floorPrefab, pos, Quaternion.identity, worldRoot); // Zawsze kładziemy podłogę. 
-                floor.transform.localScale = new Vector3(cellSize * 0.1f, 1f, cellSize * 0.1f); // PRZYWRACAMY SKALĘ (Plane 10x10 -> 1x1)
+                GameObject floor = Instantiate(floorPrefab, pos, floorPrefab.transform.rotation, worldRoot); // Zawsze kładziemy podłogę. 
+                floor.transform.localScale = new Vector3(cellSize, cellSize, 1f);
                 
                 if (grid[x, z] == 1) // Jeśli model danych mówi "tu jest ściana (1)":
                 {
