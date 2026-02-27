@@ -9,9 +9,12 @@ public class RLAgentController : Agent
     [Header("Episode")]
     [SerializeField] private bool generateNewMazeOnReset = true;
 
-    [Header("Rewards (minimal)")]
-    [SerializeField] private float goalReward = 1.0f;
+    [Header("Rewards")]
+    [SerializeField] private float goalReward = 2.0f;
     [SerializeField] private float stepPenalty = -0.0005f;
+
+    [Tooltip("Reward multiplier for getting closer to the goal each physics step.")]
+    [SerializeField] private float progressRewardScale = 0.01f;
 
     [Header("Wall penalty")]
     [SerializeField] private float wallHitPenalty = -0.01f;
@@ -23,7 +26,11 @@ public class RLAgentController : Agent
     [SerializeField] private float steerScale = 1f;
 
     private AgentMotor _motor;
+
     private float _lastWallPenaltyTime = -999f;
+
+    private Transform _goalTf;
+    private float _prevDist = 0f;
 
     public override void Initialize()
     {
@@ -39,12 +46,34 @@ public class RLAgentController : Agent
             if (generateNewMazeOnReset) MazeManager.Instance.GenerateNewLevel();
             else MazeManager.Instance.ResetAgentPositionOnly();
         }
+
+        // reacquire goal after regen/reset
+        _goalTf = FindGoalTransform();
+        _prevDist = GetDistToGoal();
     }
 
     private void FixedUpdate()
     {
-        // One-step living cost. Works nicely with Max Step as the episode limiter.
+        ApplyStepRewards();
+    }
+
+    private void ApplyStepRewards()
+    {
         AddReward(stepPenalty);
+
+        float dist = GetDistToGoal();
+        if (float.IsInfinity(dist) || float.IsInfinity(_prevDist))
+        {
+            _prevDist = dist;
+            return;
+        }
+
+        float progress = _prevDist - dist; // >0 when closer
+        // optional safety clamp to avoid crazy spikes
+        progress = Mathf.Clamp(progress, -1f, 1f);
+
+        AddReward(progress * progressRewardScale);
+        _prevDist = dist;
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -75,8 +104,9 @@ public class RLAgentController : Agent
 
         AddReward(wallHitPenalty);
     }
-    
+
     public override void Heuristic(in ActionBuffers actionsOut)
+    //TODO CO DO KURWY, CZY TO KORZYSTA Z AGENTMOTOR?
     {
         var a = actionsOut.ContinuousActions;
 
@@ -105,5 +135,29 @@ public class RLAgentController : Agent
 
         a[0] = Mathf.Clamp(throttle * throttleScale, -1f, 1f);
         a[1] = Mathf.Clamp(steer * steerScale, -1f, 1f);
+    }
+
+    // ------------------------
+    // Helpers
+    // ------------------------
+
+    private Transform FindGoalTransform()
+    {
+        var g = GameObject.FindGameObjectWithTag("Goal");
+        return g ? g.transform : null;
+    }
+
+    private float GetDistToGoal()
+    {
+        if (_goalTf == null)
+        {
+            _goalTf = FindGoalTransform();
+            if (_goalTf == null) return float.PositiveInfinity;
+        }
+
+        // planar distance (ignore Y)
+        Vector3 a = transform.position; a.y = 0f;
+        Vector3 b = _goalTf.position;   b.y = 0f;
+        return Vector3.Distance(a, b);
     }
 }
