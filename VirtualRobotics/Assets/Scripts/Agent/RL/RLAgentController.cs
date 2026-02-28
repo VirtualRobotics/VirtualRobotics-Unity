@@ -8,15 +8,11 @@ public class RLAgentController : Agent
 {
 
     [Header("Rewards")]
-    [SerializeField] private float goalReward = 2.0f;
-    [SerializeField] private float stepPenalty = -0.0005f;
-
-    [Tooltip("Reward multiplier for getting closer to the goal each physics step.")]
-    [SerializeField] private float progressRewardScale = 0.01f;
+    [SerializeField] private float goalReward = 1f;
+    [SerializeField] private float stepPenalty = -0.001f;
 
     [Header("Wall penalty")]
-    [SerializeField] private float wallHitPenalty = -0.01f;
-    [SerializeField] private float wallPenaltyCooldown = 0.15f;
+    [SerializeField] private float wallHitPenalty = -0.02f;
 
     [Header("Heuristic (Keyboard)")]
     [SerializeField] private bool enableKeyboardHeuristic = true;
@@ -27,10 +23,10 @@ public class RLAgentController : Agent
     
     // ZMIANA 1: Agent ma referencję do swojego lokalnego menadżera (Orkiestratora)
     private TrainingMazeManager _localManager; 
-
-    private float _lastWallPenaltyTime = -999f;
+    
     private Transform _goalTf;
     private float _prevDist = 0f;
+    private bool _wasSuccessful = false;
 
     public override void Initialize()
     {
@@ -42,40 +38,27 @@ public class RLAgentController : Agent
 
     public override void OnEpisodeBegin()
     {
-        _lastWallPenaltyTime = -999f;
-
-        // ZMIANA 2: Prosimy LOKALNEGO menadżera o zresetowanie poziomu
+        // Sprawdzamy, czy to nie jest pierwsze uruchomienie (CompletedEpisodes > 0)
+        // Jeśli poprzedni epizod się skończył, a flaga sukcesu jest false -> to był Timeout
+        if (CompletedEpisodes > 0 && !_wasSuccessful)
+        {
+            Academy.Instance.StatsRecorder.Add("Custom/SuccessRate", 0.0f);
+        }
+        _wasSuccessful = false; // Resetujemy flagę na nowy epizod
+        
         if (_localManager != null)
         {
             _localManager.RefreshLevel();
             _goalTf = _localManager.CurrentGoal; 
         }
-
-        _prevDist = GetDistToGoal();
+        
     }
 
     private void FixedUpdate()
     {
-        ApplyStepRewards();
-    }
-
-    private void ApplyStepRewards()
-    {
         AddReward(stepPenalty);
-
-        float dist = GetDistToGoal();
-        if (float.IsInfinity(dist) || float.IsInfinity(_prevDist))
-        {
-            _prevDist = dist;
-            return;
-        }
-
-        float progress = _prevDist - dist; 
-        progress = Mathf.Clamp(progress, -1f, 1f);
-
-        AddReward(progress * progressRewardScale);
-        _prevDist = dist;
     }
+    
 
     public override void OnActionReceived(ActionBuffers actions)
     {
@@ -87,10 +70,12 @@ public class RLAgentController : Agent
     private void OnTriggerEnter(Collider other)
     {
         if (!enabled) return;
-
-        // Tutaj Tag "Goal" jest w porządku, bo reagujemy tylko na fizyczne dotknięcie
+        
         if (other.CompareTag("Goal")) 
         {
+            _wasSuccessful = true; // Zaznaczamy, że to był sukces
+            Academy.Instance.StatsRecorder.Add("Custom/SuccessRate", 1.0f);
+            
             AddReward(goalReward);
             EndEpisode(); // To wywoła OnEpisodeBegin w następnej klatce
         }
@@ -100,9 +85,6 @@ public class RLAgentController : Agent
     {
         if (!enabled) return;
         if (!collision.collider.CompareTag("Wall")) return;
-
-        if (Time.time - _lastWallPenaltyTime < wallPenaltyCooldown) return;
-        _lastWallPenaltyTime = Time.time;
 
         AddReward(wallHitPenalty);
     }
@@ -136,15 +118,5 @@ public class RLAgentController : Agent
 
         a[0] = Mathf.Clamp(throttle * throttleScale, -1f, 1f);
         a[1] = Mathf.Clamp(steer * steerScale, -1f, 1f);
-    }
-
-    // ZMIANA 3: Uproszczone obliczanie dystansu na podstawie bezpośredniej referencji
-    private float GetDistToGoal()
-    {
-        if (_goalTf == null) return float.PositiveInfinity;
-
-        Vector3 a = transform.position; a.y = 0f;
-        Vector3 b = _goalTf.position;   b.y = 0f;
-        return Vector3.Distance(a, b);
     }
 }

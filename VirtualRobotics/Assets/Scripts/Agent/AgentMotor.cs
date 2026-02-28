@@ -5,7 +5,7 @@ public class AgentMotor : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float turnSpeed = 120f;
+    [SerializeField] private float turnSpeed = 240f;
     [SerializeField] private bool noReverse = true;
 
     [Header("Stability")]
