@@ -40,10 +40,10 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2712049848161444324}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -280,9 +280,9 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: aaba4c26d10d4beea03eb53d2268df0d, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
+  m_BehaviorType: 2
   m_BehaviorName: AgentController
   TeamId: 0
   m_UseChildSensors: 1
@@ -308,6 +308,7 @@ MonoBehaviour:
   goalReward: 1
   stepPenalty: -0.001
   wallHitPenalty: -0.1
+  pathGuidanceMultiplier: 0
   enableKeyboardHeuristic: 1
   throttleScale: 1
   steerScale: 1
@@ -344,7 +345,7 @@ MonoBehaviour:
   m_Height: 64
   m_Grayscale: 1
   m_ObservationType: 0
-  m_RuntimeCameraEnable: 0
+  m_RuntimeCameraEnable: 1
   m_ObservationStacks: 4
   m_Compression: 1
 --- !u!114 &3426210212771747973

@@ -1,18 +1,21 @@
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(AgentMotor))]
 public class RLAgentController : Agent
 {
-
+    private const int InitialMaxStep = 2000; 
     [Header("Rewards")]
     [SerializeField] private float goalReward = 1f;
     [SerializeField] private float stepPenalty = -0.001f;
 
     [Header("Wall penalty")]
-    [SerializeField] private float wallHitPenalty = -0.02f;
+    [SerializeField] private float wallHitPenalty = -0.1f;
+    [Header("Path Guidance (NavMesh)")]
+    [SerializeField] private float pathGuidanceMultiplier = 0.00f; // "Training Wheels"
 
     [Header("Heuristic (Keyboard)")]
     [SerializeField] private bool enableKeyboardHeuristic = true;
@@ -23,7 +26,9 @@ public class RLAgentController : Agent
     private int _wallHitsThisEpisode = 0;
     private Transform _goalTf;
     private bool _wasSuccessful = false;
-    
+
+    private NavMeshPath _navPath;
+    private float _prevPathDistance;
     private AgentMotor _motor;
     // ZMIANA 1: Agent ma referencję do swojego lokalnego menadżera (Orkiestratora)
     private TrainingMazeManager _localManager; 
@@ -34,6 +39,8 @@ public class RLAgentController : Agent
         
         // Szukamy TrainingMazeManager tylko w obrębie naszego prefaba EnvRoot
         _localManager = GetComponentInParent<TrainingMazeManager>();
+
+       _navPath = new NavMeshPath();
     }
 
     public override void OnEpisodeBegin()
@@ -88,7 +95,7 @@ public class RLAgentController : Agent
             width = TrainingEnvManager.Instance.MazeWidth;
             height = TrainingEnvManager.Instance.MazeHeight;
             isEmpty = TrainingEnvManager.Instance.GenerateEmptyMaze;
-            MaxStep = 2000; 
+            MaxStep = InitialMaxStep; 
         }
     }
 
@@ -121,12 +128,7 @@ public class RLAgentController : Agent
         }
     }
     //---------------------------------------------------------
-    private void FixedUpdate()
-    {
-        AddReward(stepPenalty);
-    }
     
-
     public override void OnActionReceived(ActionBuffers actions)
     {
         float throttle = actions.ContinuousActions[0];
@@ -157,6 +159,49 @@ public class RLAgentController : Agent
 
         AddReward(wallHitPenalty);
     }
+    
+    private void FixedUpdate()
+    {
+        AddReward(stepPenalty);
+        //Uncomment to apply reward shaping
+        // ApplyPathGuidanceReward();
+    }
+    
+    /// <summary>
+    /// Nagradza agenta za skracanie dystansu do celu wzdłuż faktycznej ścieżki (nie przez ściany).
+    /// </summary>
+    private void ApplyPathGuidanceReward()
+    {
+        if (pathGuidanceMultiplier <= 0 || _goalTf == null) return;
+    
+        float currentPathDist = GetNavMeshDistance();
+        float diff = _prevPathDistance - currentPathDist;
+    
+        if (diff > 0) 
+        {
+            // Przyznajemy nagrodę za postęp (np. 1 metr bliżej celu = +0.01 nagrody)
+            AddReward(diff * pathGuidanceMultiplier); 
+        }
+    
+        _prevPathDistance = currentPathDist;
+    }
+
+     private float GetNavMeshDistance() {
+         // Obliczamy ścieżkę po NavMesh. Jeśli się uda, sumujemy długość segmentów.
+         if (NavMesh.CalculatePath(transform.position, _goalTf.position, NavMesh.AllAreas, _navPath)) {
+             return GetPathLength(_navPath);
+         }
+         // Fallback do dystansu euklidesowego, jeśli NavMesh jeszcze nie "wstał"
+         return Vector3.Distance(transform.position, _goalTf.position); // Fallback
+     }
+
+     private float GetPathLength(NavMeshPath path) {
+         float lng = 0.0f;
+         for (int i = 1; i < path.corners.Length; i++) {
+             lng += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+         }
+         return lng;
+     }
     //---------------------------------------------------------
     public override void Heuristic(in ActionBuffers actionsOut)
     {
