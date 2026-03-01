@@ -42,36 +42,31 @@ public class TrainingMazeManager : MonoBehaviour
     /// </summary>
     public void Initialize(GameObject agentPrefab)
     {
-        // Klonujemy (Instantiate) prefaba agenta.
-        // Drugi argument (transform) przypina agenta jako dziecko TEGO środowiska (EnvRoot).
-        // Dzięki temu agent fizycznie należy do swojej "piaskownicy".
+        // 1. Tworzymy fizyczną instancję agenta w tym środowisku
         _currentAgent = Instantiate(agentPrefab, transform);
-        
-        // ZMUSZAMY orkiestratora, żeby od razu wygenerował pierwszy poziom
-        RefreshLevel();
+    
+        // 2. Pobieramy wartości domyślne z "Siewcy" (TrainingEnvManager)
+        // To zapewnia, że przycisnięcie "Play" w Unity od razu zbuduje coś sensownego.
+        int defaultW = TrainingEnvManager.Instance.MazeWidth;
+        int defaultH = TrainingEnvManager.Instance.MazeHeight;
+        bool defaultEmpty = TrainingEnvManager.Instance.GenerateEmptyMaze;
+
+        // 3. Budujemy pierwszy poziom
+        RefreshLevel(defaultW, defaultH, defaultEmpty);
     }
 
     /// <summary>
     /// Cykl życia ML-Agents: ta metoda jest wołana na początku każdego nowego epizodu.
     /// Realizuje przepływ (Flow) w sposób imperatywny i czytelny (SRP).
     /// </summary>
-// ZMIANA 2: RefreshLevel nie przyjmuje już argumentów!
-    public void RefreshLevel()
+    public void RefreshLevel(int width, int height, bool isEmpty)
     {
         Cleanup();
-        
-        // 1. Pytamy Głównego Siewcę o aktualne ustawienia
-        int currentW = TrainingEnvManager.Instance.MazeWidth;
-        int currentH = TrainingEnvManager.Instance.MazeHeight;
-        bool isEmpty = TrainingEnvManager.Instance.GenerateEmptyMaze;
-
-        // (Kiedy wprowadzisz Curriculum Learning ML-Agents, to dokładnie 
-        // W TYM MIEJSCU nadpiszesz te zmienne wartościami z Pythona).
-
-        // 2. Budujemy NA NOWO generator z pobranymi wymiarami
-        _generator = new MazeGenerator(currentW, currentH);
+    
+        // Budujemy generator na podstawie parametrów dostarczonych przez Agenta
+        _generator = new MazeGenerator(width, height);
         _generator.Generate(isEmpty); 
-        
+    
         ConstructVisuals();           
         PlaceEntities();              
     }

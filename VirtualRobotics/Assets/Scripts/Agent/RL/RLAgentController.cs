@@ -18,16 +18,16 @@ public class RLAgentController : Agent
     [SerializeField] private bool enableKeyboardHeuristic = true;
     [SerializeField] private float throttleScale = 1f;
     [SerializeField] private float steerScale = 1f;
-
-    private AgentMotor _motor;
     
+    private int _stepsAtSuccess = 0;
+    private int _wallHitsThisEpisode = 0;
+    private Transform _goalTf;
+    private bool _wasSuccessful = false;
+    
+    private AgentMotor _motor;
     // ZMIANA 1: Agent ma referencję do swojego lokalnego menadżera (Orkiestratora)
     private TrainingMazeManager _localManager; 
     
-    private Transform _goalTf;
-    private float _prevDist = 0f;
-    private bool _wasSuccessful = false;
-
     public override void Initialize()
     {
         _motor = GetComponent<AgentMotor>();
@@ -38,22 +38,89 @@ public class RLAgentController : Agent
 
     public override void OnEpisodeBegin()
     {
-        // Sprawdzamy, czy to nie jest pierwsze uruchomienie (CompletedEpisodes > 0)
-        // Jeśli poprzedni epizod się skończył, a flaga sukcesu jest false -> to był Timeout
-        if (CompletedEpisodes > 0 && !_wasSuccessful)
-        {
-            Academy.Instance.StatsRecorder.Add("Custom/SuccessRate", 0.0f);
-        }
-        _wasSuccessful = false; // Resetujemy flagę na nowy epizod
-        
-        if (_localManager != null)
-        {
-            _localManager.RefreshLevel();
-            _goalTf = _localManager.CurrentGoal; 
-        }
-        
+        LogEpisodeStatistics();
+    
+        DetermineLevelParameters(out int width, out int height, out bool isEmpty);
+    
+        SetupEnvironment(width, height, isEmpty);
     }
 
+// 1. Metoda od statystyk - czyści głowę agenta przed nowym startem
+    private void LogEpisodeStatistics()
+    {
+        if (CompletedEpisodes > 0)
+        {
+
+            // Jeśli był sukces -> bierzemy zapamiętany krok sukcesu.
+            // Jeśli była porażka -> oznacza to Timeout, więc bierzemy MaxStep.
+            int totalStepsInLastEpisode = _wasSuccessful ? _stepsAtSuccess : MaxStep;
+            Academy.Instance.StatsRecorder.Add("Custom/EpTotSteps", totalStepsInLastEpisode);
+        
+            // 2. Kroki do sukcesu - wysyłamy TYLKO jeśli był sukces
+            if (_wasSuccessful)
+            {
+                Academy.Instance.StatsRecorder.Add("Custom/SuccessEpTotSteps", _stepsAtSuccess);
+            }
+            // Sukces (1) lub Porażka (0)
+            Academy.Instance.StatsRecorder.Add("Custom/SuccessRate", _wasSuccessful ? 1.0f : 0.0f);
+
+            // 4. Liczba zderzeń ze ścianą
+            Academy.Instance.StatsRecorder.Add("Custom/WallHits", _wallHitsThisEpisode);
+        }
+
+        // RESET liczników na nowy epizod
+        _wasSuccessful = false;
+        _stepsAtSuccess = 0;
+        _wallHitsThisEpisode = 0;
+    }
+
+// 2. Metoda decyzyjna - tu ustalamy "co" budujemy (Curriculum vs Inspektor)
+    private void DetermineLevelParameters(out int width, out int height, out bool isEmpty)
+    {
+        float clDifficulty = Academy.Instance.EnvironmentParameters.GetWithDefault("maze_difficulty", -1.0f);
+
+        if (clDifficulty >= 0)
+        {
+            SetCurriculumDifficulty((int)clDifficulty, out width, out height, out isEmpty);
+        }
+        else
+        {
+            width = TrainingEnvManager.Instance.MazeWidth;
+            height = TrainingEnvManager.Instance.MazeHeight;
+            isEmpty = TrainingEnvManager.Instance.GenerateEmptyMaze;
+            MaxStep = 2000; 
+        }
+    }
+
+// 3. Metoda wykonawcza - tu faktycznie stawiamy ściany
+    private void SetupEnvironment(int width, int height, bool isEmpty)
+    {
+        if (_localManager != null)
+        {
+            _localManager.RefreshLevel(width, height, isEmpty);
+            _goalTf = _localManager.CurrentGoal;
+        }
+    }
+
+    // Wydzielona metoda dla przejrzystości "Planu Lekcji"
+    private void SetCurriculumDifficulty(int lesson, out int w, out int h, out bool empty)
+    {
+        // Disciplined Scaling: Skalujemy MaxStep proporcjonalnie do trudności nawigacji
+        switch (lesson)
+        {
+            case 0: // Lesson 0: Korytarz (3x1 area + walls)
+                w = 5; h = 3; empty = true;  MaxStep = 400;  break;
+            case 1: // Lesson 1: Mały kwadrat (3x3 area + walls)
+                w = 5; h = 5; empty = false; MaxStep = 800;  break;
+            case 2: // Lesson 2: Średni labirynt (5x5 area + walls)
+                w = 7; h = 7; empty = false; MaxStep = 1200; break;
+            case 3: // Lesson 3: Duży labirynt (9x9 area + walls)
+                w = 11; h = 11; empty = false; MaxStep = 3000; break; 
+            default: 
+                w = 11; h = 11; empty = false; MaxStep = 3000; break;
+        }
+    }
+    //---------------------------------------------------------
     private void FixedUpdate()
     {
         AddReward(stepPenalty);
@@ -74,7 +141,7 @@ public class RLAgentController : Agent
         if (other.CompareTag("Goal")) 
         {
             _wasSuccessful = true; // Zaznaczamy, że to był sukces
-            Academy.Instance.StatsRecorder.Add("Custom/SuccessRate", 1.0f);
+            _stepsAtSuccess = StepCount;
             
             AddReward(goalReward);
             EndEpisode(); // To wywoła OnEpisodeBegin w następnej klatce
@@ -85,10 +152,12 @@ public class RLAgentController : Agent
     {
         if (!enabled) return;
         if (!collision.collider.CompareTag("Wall")) return;
+        
+        _wallHitsThisEpisode++; 
 
         AddReward(wallHitPenalty);
     }
-
+    //---------------------------------------------------------
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var a = actionsOut.ContinuousActions;
