@@ -149,8 +149,8 @@ public class TcpClientController : MonoBehaviour
         {
             UnityMainThreadDispatcher.Enqueue(() =>
             {
-                if (MazeManager.Instance != null)
-                    MazeManager.Instance.GenerateNewLevel();
+                if (EvaluationEnvManager.Instance != null)
+                    EvaluationEnvManager.Instance.GenerateNewLevel();
             });
         }
         else

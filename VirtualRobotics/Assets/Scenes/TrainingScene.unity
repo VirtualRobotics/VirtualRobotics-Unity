@@ -243,12 +243,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingEnvManager
   envRootPrefab: {fileID: 3812091535760483349, guid: 98645f66f76fe5a4ba1b6f22645f2679, type: 3}
-  agentPrefab: {fileID: 5008710393753235848, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
-  columns: 4
-  rows: 4
+  agentPrefab: {fileID: 1698999075364403521, guid: c3b129dd03b68894c9de639a03af947a, type: 3}
+  columns: 1
+  rows: 1
   spacing: 20
-  MazeWidth: 3
-  MazeHeight: 5
+  MazeWidth: 11
+  MazeHeight: 11
   GenerateEmptyMaze: 0
 --- !u!1 &582440879
 GameObject:

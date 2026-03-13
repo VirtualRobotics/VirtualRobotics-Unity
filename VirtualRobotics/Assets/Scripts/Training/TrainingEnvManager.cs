@@ -24,6 +24,7 @@ public class TrainingEnvManager : MonoBehaviour
     public int MazeHeight = 5; 
     public bool GenerateEmptyMaze = true;
     
+    private int seed = UnityEngine.Random.Range(0, 999999);
     private void Awake()
     {
         // Ustawiamy Singletona, zanim ktokolwiek go zawoła
@@ -64,10 +65,10 @@ public class TrainingEnvManager : MonoBehaviour
             envObj.name = $"TrainingEnvironment_{row}_{col}";
 
             // Odpalamy Orkiestratora na sklonowanym środowisku
-            TrainingMazeManager envManager = envObj.GetComponent<TrainingMazeManager>();
+            MazeBuilder envBuilder = envObj.GetComponent<MazeBuilder>();
             
              // Inicjalizujemy agenta (tutaj agent pojawia się na scenie)
-            envManager.Initialize(agentPrefab);
+             envBuilder.Initialize(agentPrefab, MazeWidth, MazeHeight, GenerateEmptyMaze, seed);
             
         }
     }

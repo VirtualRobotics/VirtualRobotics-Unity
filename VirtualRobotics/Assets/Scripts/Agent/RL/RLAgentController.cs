@@ -31,14 +31,14 @@ public class RLAgentController : Agent
     private float _prevPathDistance;
     private AgentMotor _motor;
     // ZMIANA 1: Agent ma referencję do swojego lokalnego menadżera (Orkiestratora)
-    private TrainingMazeManager _localManager; 
+    private MazeBuilder _localManager; 
     
     public override void Initialize()
     {
         _motor = GetComponent<AgentMotor>();
         
         // Szukamy TrainingMazeManager tylko w obrębie naszego prefaba EnvRoot
-        _localManager = GetComponentInParent<TrainingMazeManager>();
+        _localManager = GetComponentInParent<MazeBuilder>();
 
        _navPath = new NavMeshPath();
     }

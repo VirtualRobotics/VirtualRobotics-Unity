@@ -6,59 +6,51 @@ using TMPro;
 public class MainMenuController : MonoBehaviour
 {
     [Header("Configuration")]
-    public string gameSceneName = "GameScene";
-    public GameObject infoPanel;
+    [SerializeField] private string gameSceneName = "GameScene";
+    [SerializeField] private GameObject infoPanel;
     
     [Header("Labirynth Settings UI")]
-    public GameObject configPanel;
-    public TMP_InputField widthInput;
-    public TMP_InputField heightInput;
-    public Toggle emptyMazeToggle;
-    public Toggle randomizeSpawnsToggle;
+    [SerializeField] private GameObject configPanel;
+    [SerializeField] private TMP_InputField widthInput;
+    [SerializeField] private TMP_InputField heightInput;
+    [SerializeField] private TMP_InputField seedInput; // Zmienione z toggle!
+    [SerializeField] private Toggle emptyMazeToggle;
     
-    void Start()
+    private void Start()
     {
-        if (configPanel) configPanel.SetActive(false);
+        if (configPanel != null) configPanel.SetActive(false);
         ResetInputs();
     }
 
-    void ResetInputs()
+    private void ResetInputs()
     {
-        if (widthInput) widthInput.text = GameSettings.MazeWidth.ToString();
-        if (heightInput) heightInput.text = GameSettings.MazeHeight.ToString();
+        if (widthInput != null) widthInput.text = EvaluationSettings.MazeWidth.ToString();
+        if (heightInput != null) heightInput.text = EvaluationSettings.MazeHeight.ToString();
+        
+        // Jeśli używamy custom seeda, wpisz go. Jeśli nie, zostaw puste pole.
+        if (seedInput != null)
+        {
+            seedInput.text = EvaluationSettings.UseCustomSeed ? EvaluationSettings.StartingSeed.ToString() : "";
+        }
     }
     
     public void ToggleInfoPanel(bool show)
     {
-        infoPanel.SetActive(show);
+        if (infoPanel != null) infoPanel.SetActive(show);
     }
 
-    public void SelectHeuristicMode()
-    {
-        OpenConfig(GameSettings.GameMode.HeuristicCV);
-    }
-
-    public void SelectRLMode()
-    {
-        OpenConfig(GameSettings.GameMode.ReinforcementLearning);
-    }
-
-    public void SelectTrainingMode()
-    {
-        OpenConfig(GameSettings.GameMode.Training);
-    }
+    public void SelectHeuristicMode() => OpenConfig(EvaluationSettings.GameMode.HeuristicCV);
+    public void SelectRLMode() => OpenConfig(EvaluationSettings.GameMode.ReinforcementLearning);
     
-    private void OpenConfig(GameSettings.GameMode mode)
+    private void OpenConfig(EvaluationSettings.GameMode mode)
     {
-        GameSettings.CurrentMode = mode;
+        EvaluationSettings.CurrentMode = mode;
         
-        if (configPanel) 
+        if (configPanel != null) 
         {
             configPanel.SetActive(true);
             ResetInputs();
-            
-            if (emptyMazeToggle) emptyMazeToggle.isOn = GameSettings.GenerateEmptyMaze;
-            if (randomizeSpawnsToggle) randomizeSpawnsToggle.isOn = GameSettings.RandomizeSpawns;
+            if (emptyMazeToggle != null) emptyMazeToggle.isOn = EvaluationSettings.GenerateEmptyMaze;
         }
         else
         {
@@ -68,35 +60,45 @@ public class MainMenuController : MonoBehaviour
     
     public void OnStartGameClicked()
     {
-        SaveSizeFromInputs();
+        SaveSettingsFromInputs();
         
-        if (emptyMazeToggle) GameSettings.GenerateEmptyMaze = emptyMazeToggle.isOn;
-
-        if (randomizeSpawnsToggle) GameSettings.RandomizeSpawns = randomizeSpawnsToggle.isOn;
+        if (emptyMazeToggle != null) 
+            EvaluationSettings.GenerateEmptyMaze = emptyMazeToggle.isOn;
 
         LoadGameScene();
     }
     
     public void CloseConfigPanel()
     {
-        if (configPanel) configPanel.SetActive(false);
+        if (configPanel != null) configPanel.SetActive(false);
     }
     
-    private void SaveSizeFromInputs()
+    private void SaveSettingsFromInputs()
     {
-        if (widthInput && int.TryParse(widthInput.text, out int w))
-            GameSettings.MazeWidth = Mathf.Max(5, w); // Min 5x5
+        // 1. Zapis wymiarów
+        if (widthInput != null && int.TryParse(widthInput.text, out int w))
+            EvaluationSettings.MazeWidth = Mathf.Max(5, w); 
 
-        if (heightInput && int.TryParse(heightInput.text, out int h))
-            GameSettings.MazeHeight = Mathf.Max(5, h);
+        if (heightInput != null && int.TryParse(heightInput.text, out int h))
+            EvaluationSettings.MazeHeight = Mathf.Max(5, h);
             
-        if (GameSettings.MazeWidth % 2 == 0) GameSettings.MazeWidth++;
-        if (GameSettings.MazeHeight % 2 == 0) GameSettings.MazeHeight++;
+        if (EvaluationSettings.MazeWidth % 2 == 0) EvaluationSettings.MazeWidth++;
+        if (EvaluationSettings.MazeHeight % 2 == 0) EvaluationSettings.MazeHeight++;
+
+        // 2. MAGIA SEEDA: Jeśli pole nie jest puste i ma liczbę -> użyj jej. W przeciwnym razie losuj.
+        if (seedInput != null && !string.IsNullOrWhiteSpace(seedInput.text) && int.TryParse(seedInput.text, out int s))
+        {
+            EvaluationSettings.UseCustomSeed = true;
+            EvaluationSettings.StartingSeed = s;
+        }
+        else
+        {
+            EvaluationSettings.UseCustomSeed = false;
+        }
     }
 
     private void LoadGameScene()
     {
         SceneManager.LoadScene(gameSceneName);
     }
-    
 }

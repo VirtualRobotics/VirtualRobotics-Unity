@@ -6,11 +6,9 @@ using UnityEngine;
 /// co pozwala mu żyć na scenie Unity i manipulować obiektami 3D.
 /// Odpowiada za cykl życia pojedynczego środowiska treningowego.
 /// </summary>
-public class TrainingMazeManager : MonoBehaviour
+public class MazeBuilder : MonoBehaviour
 {
     [Header("Dependencies")]
-    // [SerializeField] działa jak @Autowired / @Inject w Javie (Spring). 
-    // Pozwala przypisać referencje prosto z edytora Unity bez upubliczniania zmiennej (hermetyzacja).
     
     // worldRoot to dedykowany kontener (pusty GameObject). 
     // Wrzucamy do niego ściany i podłogi, co drastycznie ułatwia sprzątanie.
@@ -29,30 +27,22 @@ public class TrainingMazeManager : MonoBehaviour
     [Header("Randomization Options")]
     [SerializeField] private bool randomizeSpawnYaw = true;
     [SerializeField] private float spawnYawRange = 180f;
-
-    // Czysty model danych (POCO) - nasza logika biznesowa odcięta od Unity.
+    
     private MazeGenerator _generator;
     
-    // Stan (State) lokalnego środowiska - instancje konkretnych obiektów na scenie.
     private GameObject _currentAgent;
     private GameObject _currentGoal;
 
     /// <summary>
     /// Metoda "Setup", wywoływana jednorazowo przy tworzeniu środowiska przez głównego Siewcę (TrainingEnvManager).
     /// </summary>
-    public void Initialize(GameObject agentPrefab)
+    public void Initialize(GameObject agentPrefab, int width, int height, bool isEmpty, int seed)
     {
         // 1. Tworzymy fizyczną instancję agenta w tym środowisku
         _currentAgent = Instantiate(agentPrefab, transform);
-    
-        // 2. Pobieramy wartości domyślne z "Siewcy" (TrainingEnvManager)
-        // To zapewnia, że przycisnięcie "Play" w Unity od razu zbuduje coś sensownego.
-        int defaultW = TrainingEnvManager.Instance.MazeWidth;
-        int defaultH = TrainingEnvManager.Instance.MazeHeight;
-        bool defaultEmpty = TrainingEnvManager.Instance.GenerateEmptyMaze;
-
-        // 3. Budujemy pierwszy poziom
-        RefreshLevel(defaultW, defaultH, defaultEmpty);
+        UnityEngine.Random.InitState(seed);
+        // 2. Budujemy pierwszy poziom używając przekazanych parametrów
+        RefreshLevel(width, height, isEmpty);
     }
 
     /// <summary>

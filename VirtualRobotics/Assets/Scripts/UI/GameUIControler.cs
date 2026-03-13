@@ -9,8 +9,11 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI modeText;
     [SerializeField] private TMP_InputField widthInput;
     [SerializeField] private TMP_InputField heightInput;
-    [SerializeField] private Toggle keepMapToggle;
     [SerializeField] private Toggle emptyMazeToggle;
+    
+    [Header("Seed UI References")]
+    [SerializeField] private Toggle customSeedToggle;
+    [SerializeField] private TMP_InputField seedInput;
 
     [Header("Scene")]
     [SerializeField] private string menuSceneName = "MenuScene";
@@ -22,86 +25,58 @@ public class GameUIController : MonoBehaviour
 
     private void RefreshUIFromSettings()
     {
-        if (modeText != null)
-            modeText.text = $"MODE: {GameSettings.CurrentMode}";
-
-        if (widthInput != null)
-            widthInput.text = GameSettings.MazeWidth.ToString();
-
-        if (heightInput != null)
-            heightInput.text = GameSettings.MazeHeight.ToString();
-
-        if (keepMapToggle != null)
-            keepMapToggle.isOn = GameSettings.KeepMapLayout;
-
-        if (emptyMazeToggle != null)
-            emptyMazeToggle.isOn = GameSettings.GenerateEmptyMaze;
+        if (modeText != null) modeText.text = $"MODE: {EvaluationSettings.CurrentMode}";
+        if (widthInput != null) widthInput.text = EvaluationSettings.MazeWidth.ToString();
+        if (heightInput != null) heightInput.text = EvaluationSettings.MazeHeight.ToString();
+        if (emptyMazeToggle != null) emptyMazeToggle.isOn = EvaluationSettings.GenerateEmptyMaze;
+        
+        // Odświeżanie UI Seeda
+        if (customSeedToggle != null) customSeedToggle.isOn = EvaluationSettings.UseCustomSeed;
+        if (seedInput != null) seedInput.text = EvaluationSettings.StartingSeed.ToString();
     }
 
     public void OnResetAndApplyClicked()
     {
-        bool sizeChanged = ApplyMazeSizeFromInputs();
-        ApplyToggles();
+        ApplyMazeSizeFromInputs();
+        ApplySeedFromInputs(); // Zapisz dane seeda
+        
+        if (emptyMazeToggle != null)
+            EvaluationSettings.GenerateEmptyMaze = emptyMazeToggle.isOn;
 
-        bool shouldRegenerate = sizeChanged || !GameSettings.KeepMapLayout;
-
-        var mm = MazeManager.Instance;
-        if (mm == null)
+        if (EvaluationEnvManager.Instance != null)
         {
-            Debug.LogWarning("[UI] MazeManager.Instance is null.");
-            return;
+            Debug.Log("[UI] Settings applied. Resetting seed sequence and generating new level.");
+            
+            // Ponieważ zmieniamy ustawienia, chcemy zacząć sekwencję seedów od nowa!
+            EvaluationEnvManager.Instance.ResetSeedToStartingValue();
+            EvaluationEnvManager.Instance.GenerateNewLevel(); 
         }
 
-        if (shouldRegenerate)
-        {
-            Debug.Log("[UI] Regenerate maze + reset agent.");
-            mm.ReloadAndGenerate();
-        }
-        else
-        {
-            Debug.Log("[UI] Keep maze layout, reset agent pose only.");
-            mm.ResetAgentPositionOnly();
-        }
-
-        // opcjonalnie odśwież tekst po zmianach
-        if (modeText != null)
-            modeText.text = $"MODE: {GameSettings.CurrentMode}";
+        if (modeText != null) modeText.text = $"MODE: {EvaluationSettings.CurrentMode}";
     }
 
-    private bool ApplyMazeSizeFromInputs()
+    private void ApplyMazeSizeFromInputs()
     {
-        bool changed = false;
-
         if (widthInput != null && int.TryParse(widthInput.text, out int w))
         {
-            int newW = Mathf.Max(5, w);
-            if (GameSettings.MazeWidth != newW)
-            {
-                GameSettings.MazeWidth = newW;
-                changed = true;
-            }
+            EvaluationSettings.MazeWidth = Mathf.Max(5, w);
+            if (EvaluationSettings.MazeWidth % 2 == 0) EvaluationSettings.MazeWidth++;
         }
 
         if (heightInput != null && int.TryParse(heightInput.text, out int h))
         {
-            int newH = Mathf.Max(5, h);
-            if (GameSettings.MazeHeight != newH)
-            {
-                GameSettings.MazeHeight = newH;
-                changed = true;
-            }
+            EvaluationSettings.MazeHeight = Mathf.Max(5, h);
+            if (EvaluationSettings.MazeHeight % 2 == 0) EvaluationSettings.MazeHeight++;
         }
-
-        return changed;
     }
 
-    private void ApplyToggles()
+    private void ApplySeedFromInputs()
     {
-        if (keepMapToggle != null)
-            GameSettings.KeepMapLayout = keepMapToggle.isOn;
+        if (customSeedToggle != null)
+            EvaluationSettings.UseCustomSeed = customSeedToggle.isOn;
 
-        if (emptyMazeToggle != null)
-            GameSettings.GenerateEmptyMaze = emptyMazeToggle.isOn;
+        if (seedInput != null && int.TryParse(seedInput.text, out int s))
+            EvaluationSettings.StartingSeed = s;
     }
 
     public void OnMenuClicked()

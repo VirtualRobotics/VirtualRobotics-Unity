@@ -568,7 +568,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 704.7184, y: -40}
+  m_AnchoredPosition: {x: 733.8446, y: -40}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &292491519
@@ -1421,56 +1421,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!1 &748373945
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 748373947}
-  - component: {fileID: 748373946}
-  m_Layer: 0
-  m_Name: GameModeManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &748373946
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 748373945}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bde5ac7e59104f14797924a659dd6341, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameModeManager
-  cameraStreamer: {fileID: 0}
-  agent: {fileID: 5008710393753235848, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
-  heuristicController: {fileID: 0}
-  rlController: {fileID: 0}
-  decisionRequester: {fileID: 0}
-  tcpController: {fileID: 1569947042}
---- !u!4 &748373947
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 748373945}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2624.4282, y: -0.00012, z: -308.85162}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &799515536
 GameObject:
   m_ObjectHideFlags: 0
@@ -1482,7 +1432,7 @@ GameObject:
   - component: {fileID: 799515538}
   - component: {fileID: 799515537}
   m_Layer: 0
-  m_Name: MazeManager
+  m_Name: EvaluationEnvManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1500,21 +1450,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 704fa807695b4a3484eb0532bf2fec11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MazeManager
-  width: 11
-  height: 11
-  cellSize: 1
-  inferenceAgentPrefab: {fileID: 5008710393753235848, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
-  trainingAgentPrefab: {fileID: 3367837301159316711, guid: 993433589189101478fda85ee9f35f97, type: 3}
-  wallPrefab: {fileID: 3528574861658423748, guid: 60da8017cd147f946a46880e48f4787f, type: 3}
-  floorPrefab: {fileID: 1105049782207547450, guid: a4621d83dbae3e44d81875048733728e, type: 3}
-  goalPrefab: {fileID: 6475565758416362787, guid: 3f329baf75ec62847a666c6911c4c713, type: 3}
-  defaultStartCell: {x: 1, y: 1}
-  agentSpawnY: 0.2
-  goalSpawnY: 0.4
-  randomizeSpawns: 0
-  randomizeSpawnYaw: 1
-  spawnYawRange: 180
-  generateEmptyMaze: 0
+  envRootPrefab: {fileID: 3812091535760483349, guid: 98645f66f76fe5a4ba1b6f22645f2679, type: 3}
+  rlAgentPrefab: {fileID: 1698999075364403521, guid: c3b129dd03b68894c9de639a03af947a, type: 3}
+  cvAgentPrefab: {fileID: 4729365171333948971, guid: 83d17f9270aec7c4abae7f57a5fa1d90, type: 3}
+  cameraStreamer: {fileID: 0}
+  tcpController: {fileID: 0}
+  useCustomSeed: 0
+  startingSeed: 42
 --- !u!4 &799515538
 Transform:
   m_ObjectHideFlags: 0
@@ -3402,5 +3344,4 @@ SceneRoots:
   - {fileID: 799515538}
   - {fileID: 1501348782}
   - {fileID: 1081276823}
-  - {fileID: 748373947}
   - {fileID: 998481122}
