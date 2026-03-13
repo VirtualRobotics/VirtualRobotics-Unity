@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -11,9 +12,8 @@ public class TcpClientController : MonoBehaviour
     [Header("Network Settings")]
     public string host = "127.0.0.1";
     public int port = 5000;
-
-    [Header("References")]
-    [SerializeField] private CvHeuristicController controller;
+    
+    private CvHeuristicController controller;
 
     public static readonly ConcurrentQueue<byte[]> FrameQueue = new ConcurrentQueue<byte[]>();
 
@@ -27,12 +27,6 @@ public class TcpClientController : MonoBehaviour
     private void Start()
     {
         while (FrameQueue.TryDequeue(out _)) { }
-
-        if (!controller)
-        {
-            var agentObj = GameObject.FindGameObjectWithTag("Agent");
-            if (agentObj) controller = agentObj.GetComponent<CvHeuristicController>();
-        }
 
         _running = true;
         _thread = new Thread(NetworkLoop) { IsBackground = true };
@@ -129,33 +123,54 @@ public class TcpClientController : MonoBehaviour
 
         string action = parts[0].ToUpperInvariant();
 
-        if (action == "ROTATE" && parts.Length >= 2 && float.TryParse(parts[1], out float deg))
+        // NOWE API: "CONTROL <throttle> <steer>"
+        // Używamy CultureInfo.InvariantCulture, żeby "1.5" i "1,5" działały tak samo (kropki vs przecinki)
+        if (action == "CONTROL" && parts.Length >= 3 && 
+            float.TryParse(parts[1], NumberStyles.Any, CultureInfo.InvariantCulture, out float throttle) &&
+            float.TryParse(parts[2], NumberStyles.Any, CultureInfo.InvariantCulture, out float steer))
         {
             UnityMainThreadDispatcher.Enqueue(() =>
             {
+                EnsureControllerReference();
                 if (controller != null && controller.isActiveAndEnabled)
-                    controller.RotateDegrees(deg);
+                    controller.SetControl(throttle, steer);
             });
         }
-        else if (action == "MOVE" && parts.Length >= 2 && float.TryParse(parts[1], out float dist))
+        // NOWE API: "STOP" (Awaryjne hamowanie)
+        else if (action == "STOP")
         {
             UnityMainThreadDispatcher.Enqueue(() =>
             {
+                EnsureControllerReference();
                 if (controller != null && controller.isActiveAndEnabled)
-                    controller.MoveForward(dist);
+                    controller.StopAgent();
             });
         }
+        // STARE API: Zostawiamy reset w spokoju
         else if (action == "RESET")
         {
             UnityMainThreadDispatcher.Enqueue(() =>
             {
                 if (EvaluationEnvManager.Instance != null)
+                {
+                    Debug.Log("[TCP] Otrzymano komendę RESET z Pythona.");
                     EvaluationEnvManager.Instance.GenerateNewLevel();
+                }
             });
         }
         else
         {
-            DebugLog("[TCP] Unknown command: " + command);
+            DebugLog("[TCP] Nieznana komenda lub zły format: " + command);
+        }
+    }
+
+    // Pomocnicza metoda, która upewnia się, że mamy aktualnego agenta, 
+    // nawet jeśli stary został zniszczony przy zmianie seeda!
+    private void EnsureControllerReference()
+    {
+        if (controller == null || !controller.gameObject.activeInHierarchy)
+        {
+            controller = FindFirstObjectByType<CvHeuristicController>(FindObjectsInactive.Exclude);
         }
     }
 
