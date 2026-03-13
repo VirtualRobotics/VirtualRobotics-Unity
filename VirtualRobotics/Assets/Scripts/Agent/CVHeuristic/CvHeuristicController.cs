@@ -4,26 +4,58 @@ using UnityEngine;
 public class CvHeuristicController : MonoBehaviour
 {
     [SerializeField] private AgentMotor motor;
+    
+    [Header("Evaluation Settings")]
+    [SerializeField] private int maxSteps = 5000;
+    
+    private int _stepCount = 0;
+    private bool _episodeEnded = false; // Żeby nie logować wielokrotnie
 
     private void Awake()
     {
         if (!motor) motor = GetComponent<AgentMotor>();
     }
 
-    // API pod TcpClientController (zachowujemy te same nazwy komend)
+    private void FixedUpdate()
+    {
+        // Jeśli agent już wygrał/przegrał i czeka na reset mapy, nic nie robimy
+        if (_episodeEnded || EvaluationEnvManager.Instance == null) return;
+
+        _stepCount++;
+
+        // SPRAWDZAMY TIMEOUT
+        if (_stepCount >= maxSteps)
+        {
+            _episodeEnded = true;
+            Debug.LogWarning("[CV Agent] Timeout! Przekroczono limit kroków.");
+            
+            EvaluationEnvManager.Instance.LogResult(maxSteps, false);
+            EvaluationEnvManager.Instance.GenerateNewLevel();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!enabled || _episodeEnded || EvaluationEnvManager.Instance == null) return;
+
+        // SPRAWDZAMY SUKCES
+        if (other.CompareTag("Goal"))
+        {
+            _episodeEnded = true;
+            EvaluationEnvManager.Instance.LogResult(_stepCount, true);
+            EvaluationEnvManager.Instance.GenerateNewLevel();
+        }
+    }
+
     public void MoveForward(float distance)
     {
-        // distance -> przeliczamy na "throttle" na 1 fixed step:
-        // najprościej: potraktuj distance jako "ile jednostek w tej klatce"
-        // i przemapuj to na throttle w [-1..1]
         float throttle = Mathf.Clamp(distance, -1f, 1f);
         motor.Apply(throttle, 0f);
     }
 
     public void RotateDegrees(float degrees)
     {
-        // degrees -> podobnie mapujemy na steer
-        float steer = Mathf.Clamp(degrees / 90f, -1f, 1f); // 90deg => 1.0 steer (heurystycznie)
+        float steer = Mathf.Clamp(degrees / 90f, -1f, 1f);
         motor.Apply(0f, steer);
     }
 

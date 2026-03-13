@@ -66,10 +66,11 @@ public class RLAgentController : Agent
             MaxStep = InitialMaxStep; 
             if (_localManager != null) _goalTf = _localManager.CurrentGoal;
 
-            // KLUCZOWY FIX: Ignorujemy pierwsze wywołanie przy spawnie (CompletedEpisodes == 0).
-            // Budujemy nową mapę tylko, jeśli agent faktycznie dostał Timeout (CompletedEpisodes > 0).
+            // Jeśli completedEpisodes > 0 i NIE mamy sukcesu, to znaczy, że był TIMEOUT
             if (CompletedEpisodes > 0 && !_wasSuccessful)
             {
+                // NOWE: Logujemy porażkę
+                EvaluationEnvManager.Instance.LogResult(MaxStep, false);
                 StartCoroutine(GenerateNextLevelDelayed());
             }
         }
@@ -161,21 +162,20 @@ public class RLAgentController : Agent
         
         if (other.CompareTag("Goal")) 
         {
-            _wasSuccessful = true; // Zaznaczamy, że to był sukces
+            _wasSuccessful = true;
             _stepsAtSuccess = StepCount;
             
             AddReward(goalReward);
             
-            // W trybie ewaluacji NIE chcemy wołać EndEpisode, jeśli i tak zniszczymy środowisko.
-            // Chcemy tylko zainicjować przebudowę.
             if (EvaluationEnvManager.Instance != null)
             {
-                // Używamy opóźnienia, żeby upewnić się, że fizyka skończyła liczyć klatkę
+                // NOWE: Logujemy sukces
+                EvaluationEnvManager.Instance.LogResult(_stepsAtSuccess, true);
                 StartCoroutine(GenerateNextLevelDelayed());
             }
             else
             {
-                EndEpisode(); // W trybie treningowym działamy normalnie
+                EndEpisode(); // W treningu działamy normalnie
             }
         }
     }
