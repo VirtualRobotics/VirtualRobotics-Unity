@@ -8,12 +8,14 @@ using UnityEngine.InputSystem;
 public class RLAgentController : Agent
 {
     private const int InitialMaxStep = 2000; 
+    
     [Header("Rewards")]
     [SerializeField] private float goalReward = 1f;
     [SerializeField] private float stepPenalty = -0.001f;
 
     [Header("Wall penalty")]
     [SerializeField] private float wallHitPenalty = -0.1f;
+    
     [Header("Path Guidance (NavMesh)")]
     [SerializeField] private float pathGuidanceMultiplier = 0.00f; // "Training Wheels"
 
@@ -30,48 +32,79 @@ public class RLAgentController : Agent
     private NavMeshPath _navPath;
     private float _prevPathDistance;
     private AgentMotor _motor;
-    // ZMIANA 1: Agent ma referencję do swojego lokalnego menadżera (Orkiestratora)
+    
+    // Referencja do lokalnego budowniczego wewnątrz prefaba EnvRoot
     private MazeBuilder _localManager; 
     
     public override void Initialize()
     {
         _motor = GetComponent<AgentMotor>();
         
-        // Szukamy TrainingMazeManager tylko w obrębie naszego prefaba EnvRoot
+        // Szukamy MazeBuilder tylko w obrębie naszego prefaba
         _localManager = GetComponentInParent<MazeBuilder>();
-
-       _navPath = new NavMeshPath();
+        _navPath = new NavMeshPath();
     }
 
     public override void OnEpisodeBegin()
     {
         LogEpisodeStatistics();
+
+        // 1. TRYB TRENINGOWY
+        if (TrainingEnvManager.Instance != null)
+        {
+            DetermineLevelParameters(out int width, out int height, out bool isEmpty);
+            
+            if (_localManager != null)
+            {
+                _localManager.RefreshLevel(width, height, isEmpty, UnityEngine.Random.Range(0, 999999));
+                _goalTf = _localManager.CurrentGoal;
+            }
+        }
+        // 2. TRYB EWALUACJI
+        else if (EvaluationEnvManager.Instance != null)
+        {
+            MaxStep = InitialMaxStep; 
+            if (_localManager != null) _goalTf = _localManager.CurrentGoal;
+
+            // KLUCZOWY FIX: Ignorujemy pierwsze wywołanie przy spawnie (CompletedEpisodes == 0).
+            // Budujemy nową mapę tylko, jeśli agent faktycznie dostał Timeout (CompletedEpisodes > 0).
+            if (CompletedEpisodes > 0 && !_wasSuccessful)
+            {
+                StartCoroutine(GenerateNextLevelDelayed());
+            }
+        }
+    }
     
-        DetermineLevelParameters(out int width, out int height, out bool isEmpty);
-    
-        SetupEnvironment(width, height, isEmpty);
+    private System.Collections.IEnumerator GenerateNextLevelDelayed()
+    {
+        // Czekamy do końca klatki, żeby ML-Agents skończyło wszystkie swoje wewnętrzne resety
+        yield return new WaitForEndOfFrame();
+        
+        if (EvaluationEnvManager.Instance != null)
+        {
+            EvaluationEnvManager.Instance.GenerateNewLevel();
+        }
     }
 
-// 1. Metoda od statystyk - czyści głowę agenta przed nowym startem
     private void LogEpisodeStatistics()
     {
         if (CompletedEpisodes > 0)
         {
-
             // Jeśli był sukces -> bierzemy zapamiętany krok sukcesu.
             // Jeśli była porażka -> oznacza to Timeout, więc bierzemy MaxStep.
             int totalStepsInLastEpisode = _wasSuccessful ? _stepsAtSuccess : MaxStep;
             Academy.Instance.StatsRecorder.Add("Custom/EpTotSteps", totalStepsInLastEpisode);
         
-            // 2. Kroki do sukcesu - wysyłamy TYLKO jeśli był sukces
+            // Kroki do sukcesu - wysyłamy TYLKO jeśli był sukces
             if (_wasSuccessful)
             {
                 Academy.Instance.StatsRecorder.Add("Custom/SuccessEpTotSteps", _stepsAtSuccess);
             }
+            
             // Sukces (1) lub Porażka (0)
             Academy.Instance.StatsRecorder.Add("Custom/SuccessRate", _wasSuccessful ? 1.0f : 0.0f);
 
-            // 4. Liczba zderzeń ze ścianą
+            // Liczba zderzeń ze ścianą
             Academy.Instance.StatsRecorder.Add("Custom/WallHits", _wallHitsThisEpisode);
         }
 
@@ -81,7 +114,6 @@ public class RLAgentController : Agent
         _wallHitsThisEpisode = 0;
     }
 
-// 2. Metoda decyzyjna - tu ustalamy "co" budujemy (Curriculum vs Inspektor)
     private void DetermineLevelParameters(out int width, out int height, out bool isEmpty)
     {
         float clDifficulty = Academy.Instance.EnvironmentParameters.GetWithDefault("maze_difficulty", -1.0f);
@@ -99,20 +131,8 @@ public class RLAgentController : Agent
         }
     }
 
-// 3. Metoda wykonawcza - tu faktycznie stawiamy ściany
-    private void SetupEnvironment(int width, int height, bool isEmpty)
-    {
-        if (_localManager != null)
-        {
-            _localManager.RefreshLevel(width, height, isEmpty);
-            _goalTf = _localManager.CurrentGoal;
-        }
-    }
-
-    // Wydzielona metoda dla przejrzystości "Planu Lekcji"
     private void SetCurriculumDifficulty(int lesson, out int w, out int h, out bool empty)
     {
-        // Disciplined Scaling: Skalujemy MaxStep proporcjonalnie do trudności nawigacji
         switch (lesson)
         {
             case 0: // Lesson 0: Korytarz (3x1 area + walls)
@@ -127,7 +147,6 @@ public class RLAgentController : Agent
                 w = 11; h = 11; empty = false; MaxStep = 3000; break;
         }
     }
-    //---------------------------------------------------------
     
     public override void OnActionReceived(ActionBuffers actions)
     {
@@ -146,7 +165,18 @@ public class RLAgentController : Agent
             _stepsAtSuccess = StepCount;
             
             AddReward(goalReward);
-            EndEpisode(); // To wywoła OnEpisodeBegin w następnej klatce
+            
+            // W trybie ewaluacji NIE chcemy wołać EndEpisode, jeśli i tak zniszczymy środowisko.
+            // Chcemy tylko zainicjować przebudowę.
+            if (EvaluationEnvManager.Instance != null)
+            {
+                // Używamy opóźnienia, żeby upewnić się, że fizyka skończyła liczyć klatkę
+                StartCoroutine(GenerateNextLevelDelayed());
+            }
+            else
+            {
+                EndEpisode(); // W trybie treningowym działamy normalnie
+            }
         }
     }
 
@@ -156,7 +186,6 @@ public class RLAgentController : Agent
         if (!collision.collider.CompareTag("Wall")) return;
         
         _wallHitsThisEpisode++; 
-
         AddReward(wallHitPenalty);
     }
     
@@ -167,9 +196,6 @@ public class RLAgentController : Agent
         // ApplyPathGuidanceReward();
     }
     
-    /// <summary>
-    /// Nagradza agenta za skracanie dystansu do celu wzdłuż faktycznej ścieżki (nie przez ściany).
-    /// </summary>
     private void ApplyPathGuidanceReward()
     {
         if (pathGuidanceMultiplier <= 0 || _goalTf == null) return;
@@ -179,30 +205,31 @@ public class RLAgentController : Agent
     
         if (diff > 0) 
         {
-            // Przyznajemy nagrodę za postęp (np. 1 metr bliżej celu = +0.01 nagrody)
             AddReward(diff * pathGuidanceMultiplier); 
         }
     
         _prevPathDistance = currentPathDist;
     }
 
-     private float GetNavMeshDistance() {
-         // Obliczamy ścieżkę po NavMesh. Jeśli się uda, sumujemy długość segmentów.
-         if (NavMesh.CalculatePath(transform.position, _goalTf.position, NavMesh.AllAreas, _navPath)) {
+     private float GetNavMeshDistance() 
+     {
+         if (NavMesh.CalculatePath(transform.position, _goalTf.position, NavMesh.AllAreas, _navPath)) 
+         {
              return GetPathLength(_navPath);
          }
-         // Fallback do dystansu euklidesowego, jeśli NavMesh jeszcze nie "wstał"
-         return Vector3.Distance(transform.position, _goalTf.position); // Fallback
+         return Vector3.Distance(transform.position, _goalTf.position); 
      }
 
-     private float GetPathLength(NavMeshPath path) {
+     private float GetPathLength(NavMeshPath path) 
+     {
          float lng = 0.0f;
-         for (int i = 1; i < path.corners.Length; i++) {
+         for (int i = 1; i < path.corners.Length; i++) 
+         {
              lng += Vector3.Distance(path.corners[i - 1], path.corners[i]);
          }
          return lng;
      }
-    //---------------------------------------------------------
+
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var a = actionsOut.ContinuousActions;
