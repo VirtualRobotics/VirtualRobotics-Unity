@@ -568,7 +568,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 733.8446, y: -40}
+  m_AnchoredPosition: {x: 768.11206, y: -40}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &292491519
@@ -1454,9 +1454,7 @@ MonoBehaviour:
   rlAgentPrefab: {fileID: 1698999075364403521, guid: c3b129dd03b68894c9de639a03af947a, type: 3}
   cvAgentPrefab: {fileID: 4729365171333948971, guid: 83d17f9270aec7c4abae7f57a5fa1d90, type: 3}
   cameraStreamer: {fileID: 0}
-  tcpController: {fileID: 0}
-  useCustomSeed: 0
-  startingSeed: 42
+  tcpController: {fileID: 1569947042}
 --- !u!4 &799515538
 Transform:
   m_ObjectHideFlags: 0
@@ -1706,8 +1704,9 @@ MonoBehaviour:
   modeText: {fileID: 208894201}
   widthInput: {fileID: 829593712}
   heightInput: {fileID: 1058134770}
-  keepMapToggle: {fileID: 292491517}
   emptyMazeToggle: {fileID: 0}
+  customSeedToggle: {fileID: 0}
+  seedInput: {fileID: 0}
   menuSceneName: MenuScene
 --- !u!114 &998481119
 MonoBehaviour:
@@ -2721,9 +2720,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50178c144cbdaa14abf8b94b068c7b01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  host: 127.0.0.1
-  port: 5000
-  controller: {fileID: 0}
+  serverIP: 127.0.0.1
+  serverPort: 5000
 --- !u!4 &1569947043
 Transform:
   m_ObjectHideFlags: 0

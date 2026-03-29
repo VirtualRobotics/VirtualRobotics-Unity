@@ -52,6 +52,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: CVAgent
       objectReference: {fileID: 0}
+    - target: {fileID: 8532776310939083239, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: targetTexture
+      value: 
+      objectReference: {fileID: 8400000, guid: 666871456960aba44849de1fe47c6b16, type: 2}
+    - target: {fileID: 8532776310939083239, guid: 1533c347401250c4f87ef45b88a40ce2, type: 3}
+      propertyPath: enableStreaming
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -77,4 +85,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48e7a447db62ff1428fbaad0092b0793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CvHeuristicController
-  motor: {fileID: 0}

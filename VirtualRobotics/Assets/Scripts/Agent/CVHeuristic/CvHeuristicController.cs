@@ -1,89 +1,73 @@
+using System.Collections;
 using UnityEngine;
+
+[System.Serializable]
+public class CvAction
+{
+    public float throttle;
+    public float steer;
+}
 
 [RequireComponent(typeof(AgentMotor))]
 public class CvHeuristicController : MonoBehaviour
 {
-    [SerializeField] private AgentMotor motor;
-    
-    [Header("Evaluation Settings")]
-    [SerializeField] private int maxSteps = 5000;
+    private AgentMotor _motor;
+    private TcpClientController _tcp;
     
     private int _stepCount = 0;
     private bool _episodeEnded = false;
 
-    // Stan wirtualnego "pada"
-    private float _currentThrottle = 0f;
-    private float _currentSteer = 0f;
-
     private void Awake()
     {
-        if (!motor) motor = GetComponent<AgentMotor>();
-    }
-    
-    
-    /// <summary>
-    /// Ustawia wirtualny joystick. 
-    /// throttle: [0, 1] (Tylko jazda do przodu, brak wstecznego)
-    /// steer: [-1, 1] (Lewo / Prawo)
-    /// </summary>
-    public void SetControl(float throttle, float steer)
-    {
-        // Zmienione Clamp na [0, 1] - odcinamy próby cofania
-        _currentThrottle = Mathf.Clamp(throttle, 0f, 1f); 
-        _currentSteer = Mathf.Clamp(steer, -1f, 1f);
+        _motor = GetComponent<AgentMotor>();
     }
 
-    /// <summary>
-    /// Zatrzymuje agenta (resetuje joystick do zera)
-    /// </summary>
-    public void StopAgent()
+    private void Start()
     {
-        _currentThrottle = 0f;
-        _currentSteer = 0f;
+        _tcp = FindFirstObjectByType<TcpClientController>();
+        
+        if (_tcp == null)
+        {
+            Debug.LogError("[CV] TcpClientController not found in scene!");
+            enabled = false;
+        }
     }
-
-    // =========================================================
 
     private void FixedUpdate()
     {
-        // Jeśli czekamy na reset mapy, nic nie robimy
-        if (_episodeEnded || EvaluationEnvManager.Instance == null) return;
+        if (_episodeEnded || _tcp == null) return;
 
-        // 1. APLIKUJEMY RUCH Z "PADA" CO KLATKĘ (jak RL Agent)
-        motor.Apply(_currentThrottle, _currentSteer);
-
-        // 2. LICZYMY KROKI
         _stepCount++;
 
-        // 3. SPRAWDZAMY TIMEOUT (Porażka)
-        if (_stepCount >= maxSteps)
+        if (!string.IsNullOrEmpty(_tcp.LatestJsonResponse))
         {
-            _episodeEnded = true;
-            Debug.LogWarning("[CV] Timeout! Przekroczono limit kroków.");
-            
-            StopAgent();
-            EvaluationEnvManager.Instance.LogResult(maxSteps, false);
-            EvaluationEnvManager.Instance.GenerateNewLevel();
+            CvAction action = JsonUtility.FromJson<CvAction>(_tcp.LatestJsonResponse);
+            _motor.Apply(action.throttle, action.steer);
         }
     }
+
+    // --- Evaluation & Environment Reset Logic ---
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!enabled || _episodeEnded || EvaluationEnvManager.Instance == null) return;
+        if (_episodeEnded) return;
 
-        // SPRAWDZAMY SUKCES
         if (other.CompareTag("Goal"))
         {
             _episodeEnded = true;
-            StopAgent(); // Hamujemy przed startem nowej mapy
-            EvaluationEnvManager.Instance.LogResult(_stepCount, true);
-            EvaluationEnvManager.Instance.GenerateNewLevel();
+            _motor.Apply(0, 0);
+            
+            if (EvaluationEnvManager.Instance != null)
+            {
+                EvaluationEnvManager.Instance.LogResult(_stepCount, true);
+                StartCoroutine(GenerateNextLevelDelayed());
+            }
         }
     }
 
-    public void ResetAgent(Vector3 position)
+    private IEnumerator GenerateNextLevelDelayed()
     {
-        StopAgent();
-        motor.ResetPose(position, Quaternion.identity);
+        yield return new WaitForEndOfFrame();
+        EvaluationEnvManager.Instance.GenerateNewLevel();
     }
 }
