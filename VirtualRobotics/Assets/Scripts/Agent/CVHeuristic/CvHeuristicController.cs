@@ -31,6 +31,7 @@ public class CvHeuristicController : MonoBehaviour
             Debug.LogError("[CV] TcpClientController not found in scene!");
             enabled = false;
         }
+        _tcp.ClearResponse();
     }
 
     private void FixedUpdate()

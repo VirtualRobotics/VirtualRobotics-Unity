@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,8 +64,9 @@ public class TcpClientController : MonoBehaviour
     {
         try
         {
-            // Send size -> Send payload -> Await response
-            byte[] sizeBytes = BitConverter.GetBytes(imageBytes.Length);
+            int networkOrderSize = IPAddress.HostToNetworkOrder(imageBytes.Length);
+            byte[] sizeBytes = BitConverter.GetBytes(networkOrderSize);
+            
             await _stream.WriteAsync(sizeBytes, 0, sizeBytes.Length);
             await _stream.WriteAsync(imageBytes, 0, imageBytes.Length);
 
@@ -86,5 +88,9 @@ public class TcpClientController : MonoBehaviour
         _isConnected = false;
         _stream?.Close();
         _client?.Close();
+    }
+    public void ClearResponse()
+    {
+        LatestJsonResponse = "";
     }
 }

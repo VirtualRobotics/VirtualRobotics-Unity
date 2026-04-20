@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraStreamer
   targetTexture: {fileID: 8400000, guid: 989bb38da13114743baafd7ec414da11, type: 2}
-  enableStreaming: 0
+  enableStreaming: 1
   captureRate: 0.1
 --- !u!1 &5008710393753235848
 GameObject:
